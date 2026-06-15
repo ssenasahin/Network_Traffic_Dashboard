@@ -4,11 +4,11 @@ A personal cybersecurity dashboard for network reconnaissance and vulnerability 
 
 ## Screenshots
 
-| Port Tarayici | Canli Izleme |
+| Port Scanner | Live Monitor |
 |---|---|
 | ![Port Scanner](docs/screenshots/port_scanner.png) | ![Live Monitor](docs/screenshots/live_monitor.png) |
 
-| CVE Sorgulama | Trafik Analizi |
+| CVE Lookup | Traffic Analysis |
 |---|---|
 | ![CVE Lookup](docs/screenshots/cve_lookup.png) | ![Traffic Analysis](docs/screenshots/traffic_analysis.png) |
 
