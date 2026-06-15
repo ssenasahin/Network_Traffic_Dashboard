@@ -72,13 +72,13 @@ ag dashboard/
 │   ├── database.py      # SQLite scan history
 │   └── run_scanner.py
 ├── static/
-│   ├── index.html       # Port Tarayici
-│   ├── monitor.html     # Canli Izleme
-│   ├── cve.html         # CVE Sorgulama
-│   ├── traffic.html     # Trafik Analizi
-│   ├── logs.html        # Gunlukler
-│   ├── support.html     # Destek / Hakkinda
-│   └── notifications.js # Cross-page notification system
+│   ├── index.html      
+│   ├── monitor.html   
+│   ├── cve.html         
+│   ├── traffic.html     
+│   ├── logs.html       
+│   ├── support.html     
+│   └── notifications.js
 ├── docs/screenshots/
 ├── requirements.txt
 └── README.md
