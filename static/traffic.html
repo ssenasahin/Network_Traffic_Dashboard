@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html class="dark" lang="tr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AETHER_SCAN - Trafik Analizi</title>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+  tailwind.config = {
+    darkMode:"class",
+    theme:{extend:{colors:{
+      "background":"#0c1324","surface-dim":"#0c1324",
+      "surface-container":"#191f31","surface-container-low":"#151b2d",
+      "surface-container-high":"#23293c","surface-container-highest":"#2e3447",
+      "surface-container-lowest":"#070d1f","surface-variant":"#2e3447",
+      "on-surface":"#dce1fb","on-surface-variant":"#bccabb",
+      "on-background":"#dce1fb","primary":"#6bfb9a","on-primary":"#003919",
+      "secondary":"#adc6ff","error":"#ffb4ab",
+      "outline-variant":"#3d4a3e","outline":"#869486",
+    }}}
+  }
+</script>
+<style>
+  body{font-family:"Hanken Grotesk",sans-serif;}
+  .mono{font-family:"JetBrains Mono",monospace;}
+  .terminal-scroll::-webkit-scrollbar{width:6px;}
+  .terminal-scroll::-webkit-scrollbar-track{background:#070d1f;}
+  .terminal-scroll::-webkit-scrollbar-thumb{background:rgba(107,251,154,.3);border-radius:4px;}
+</style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+
+<!-- TopNav -->
+<header class="bg-surface-dim/80 backdrop-blur-xl border-b border-outline-variant/30 fixed top-0 w-full flex justify-between items-center h-16 px-8 z-50">
+  <div class="flex items-center gap-8">
+    <a href="/" class="text-2xl font-bold tracking-tighter text-primary mono uppercase">AETHER_SCAN</a>
+    <nav class="hidden md:flex gap-2 mono text-xs">
+      <a href="/"                    class="text-on-surface-variant hover:text-on-surface hover:bg-primary/10 px-3 py-2 rounded-lg transition-all">Port Tarayıcı</a>
+      <a href="/static/monitor.html" class="text-on-surface-variant hover:text-on-surface hover:bg-primary/10 px-3 py-2 rounded-lg transition-all">Canlı İzleme</a>
+      <a href="/static/cve.html"     class="text-on-surface-variant hover:text-on-surface hover:bg-primary/10 px-3 py-2 rounded-lg transition-all">CVE Sorgulama</a>
+      <a href="/static/traffic.html" class="text-primary border-b-2 border-primary pb-0.5 px-3 py-2 rounded-t-lg">Trafik Analizi</a>
+    </nav>
+  </div>
+  <div class="flex items-center gap-3">
+    <span class="w-2 h-2 rounded-full bg-primary animate-pulse" id="dot"></span>
+    <span class="mono text-xs text-on-surface-variant" id="conn-lbl">BAĞLANIYOR...</span>
+    <span class="mono text-xs text-on-surface-variant">| Güncelleme: <span id="last-update">—</span></span>
+    <div class="relative ml-2">
+      <button id="notif-btn" onclick="toggleNotifications()" class="relative text-on-surface-variant hover:text-primary transition-colors w-9 h-9 flex items-center justify-center rounded-full hover:bg-primary/10">
+        <span class="material-symbols-outlined text-[20px]">notifications</span>
+        <span id="notif-badge" class="hidden absolute -top-0.5 -right-0.5 bg-error text-[#000] mono text-[9px] font-bold min-w-[16px] h-4 rounded-full flex items-center justify-center px-0.5">0</span>
+      </button>
+      <div id="notif-panel" class="hidden absolute right-0 top-11 w-80 bg-surface-container border border-outline-variant/30 rounded-xl shadow-2xl z-[200] overflow-hidden mono text-xs">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-outline-variant/20">
+          <span class="text-on-surface font-bold tracking-widest text-[10px]">BİLDİRİMLER</span>
+          <button onclick="clearNotifications()" class="text-on-surface-variant hover:text-error transition-colors text-[10px] tracking-widest">TEMİZLE</button>
+        </div>
+        <div id="notif-list" class="max-h-80 overflow-y-auto"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="flex flex-1 mt-16">
+
+  <!-- Sidebar -->
+  <aside class="hidden md:flex flex-col bg-surface-container-lowest/80 border-r border-outline-variant/20 w-64 fixed top-16 h-[calc(100vh-64px)] py-4 z-40 mono text-xs">
+    <div class="px-6 mb-4 mt-2">
+      <div class="text-on-surface font-bold">NODE_01</div>
+      <div class="text-primary mt-1 flex items-center gap-1">
+        <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span> TRAFİK_İZLEME
+      </div>
+    </div>
+
+    <nav class="flex-1 space-y-1">
+      <a href="/"                    class="text-on-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all"><span class="material-symbols-outlined text-[18px]">lan</span> Port Tarayıcı</a>
+      <a href="/static/monitor.html" class="text-on-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all"><span class="material-symbols-outlined text-[18px]">radar</span> Canlı İzleme</a>
+      <a href="/static/cve.html"     class="text-on-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all"><span class="material-symbols-outlined text-[18px]">security</span> CVE Sorgulama</a>
+      <a href="/static/traffic.html" class="bg-primary/20 text-primary border-l-4 border-primary px-4 py-3 flex items-center gap-3"><span class="material-symbols-outlined text-[18px]">analytics</span> Trafik Analizi</a>
+    </nav>
+    <div class="border-t border-outline-variant/20 pt-3 mt-2 space-y-1">
+      <a href="/static/support.html" class="text-on-surface-variant px-4 py-2.5 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all duration-150">
+        <span class="material-symbols-outlined text-[18px]">help_outline</span> Destek
+      </a>
+      <a href="/static/logs.html" class="text-on-surface-variant px-4 py-2.5 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all duration-150">
+        <span class="material-symbols-outlined text-[18px]">history</span> Günlükler
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="flex-1 md:ml-64 p-8 overflow-y-auto">
+
+    <div class="mb-6">
+      <h1 class="text-3xl font-bold tracking-tight text-on-surface mb-1">Trafik Analizi</h1>
+      <p class="mono text-xs text-on-surface-variant">Sistem genelinde aktif ağ bağlantılarının gerçek zamanlı analizi.</p>
+    </div>
+
+    <!-- Özet Kartlar -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-4">
+        <div class="mono text-[10px] text-on-surface-variant mb-1 tracking-widest">TOPLAM BAĞLANTI</div>
+        <div class="text-3xl font-bold text-on-surface mono" id="stat-total">—</div>
+      </div>
+      <div class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-4">
+        <div class="mono text-[10px] text-on-surface-variant mb-1 tracking-widest">KURULU</div>
+        <div class="text-3xl font-bold text-primary mono" id="stat-established">—</div>
+      </div>
+      <div class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-4">
+        <div class="mono text-[10px] text-on-surface-variant mb-1 tracking-widest">DİNLEYEN</div>
+        <div class="text-3xl font-bold text-secondary mono" id="stat-listening">—</div>
+      </div>
+      <div class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-4">
+        <div class="mono text-[10px] text-on-surface-variant mb-1 tracking-widest">PROTOKOL ÇEŞİDİ</div>
+        <div class="text-3xl font-bold text-on-surface mono" id="stat-protocols">—</div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 xl:grid-cols-12 gap-4">
+
+      <!-- Bağlantı Geçmişi (line chart) -->
+      <div class="xl:col-span-8 bg-surface-container-low border border-outline-variant/30 rounded-xl p-5">
+        <div class="mono text-[10px] text-on-surface-variant mb-4 tracking-widest flex items-center gap-2">
+          <span class="material-symbols-outlined text-[14px]">show_chart</span>
+          [HIST_01] BAĞLANTI GEÇMİŞİ (son 60s)
+        </div>
+        <canvas id="history-chart" height="160"></canvas>
+      </div>
+
+      <!-- Protokol Dağılımı (doughnut) -->
+      <div class="xl:col-span-4 bg-surface-container-low border border-outline-variant/30 rounded-xl p-5">
+        <div class="mono text-[10px] text-on-surface-variant mb-4 tracking-widest flex items-center gap-2">
+          <span class="material-symbols-outlined text-[14px]">donut_large</span>
+          [PROTO_02] PROTOKOL DAĞILIMI
+        </div>
+        <canvas id="proto-chart" height="200"></canvas>
+      </div>
+
+      <!-- Top Remote IP'ler -->
+      <div class="xl:col-span-4 bg-surface-container-low border border-outline-variant/30 rounded-xl p-5">
+        <div class="mono text-[10px] text-on-surface-variant mb-4 tracking-widest flex items-center gap-2">
+          <span class="material-symbols-outlined text-[14px]">leaderboard</span>
+          [TOP_03] EN ÇOK BAĞLANAN IP (Top 10)
+        </div>
+        <div id="top-ips" class="space-y-2"></div>
+      </div>
+
+      <!-- Top Servisler -->
+      <div class="xl:col-span-4 bg-surface-container-low border border-outline-variant/30 rounded-xl p-5">
+        <div class="mono text-[10px] text-on-surface-variant mb-4 tracking-widest flex items-center gap-2">
+          <span class="material-symbols-outlined text-[14px]">bar_chart</span>
+          [TOP_04] EN AKTİF SERVİSLER (Top 10)
+        </div>
+        <div id="top-services" class="space-y-2"></div>
+      </div>
+
+      <!-- Durum Dağılımı -->
+      <div class="xl:col-span-4 bg-surface-container-low border border-outline-variant/30 rounded-xl p-5">
+        <div class="mono text-[10px] text-on-surface-variant mb-4 tracking-widest flex items-center gap-2">
+          <span class="material-symbols-outlined text-[14px]">flag</span>
+          [STAT_05] BAĞLANTI DURUMLARI
+        </div>
+        <div id="status-dist" class="space-y-2"></div>
+      </div>
+
+      <!-- Aktif Bağlantı Tablosu -->
+      <div class="xl:col-span-12 bg-surface-container-low border border-outline-variant/30 rounded-xl overflow-hidden">
+        <div class="px-6 py-4 border-b border-outline-variant/30 flex justify-between items-center bg-surface-container/50">
+          <div class="mono text-[10px] text-on-surface-variant tracking-widest flex items-center gap-2">
+            <span class="material-symbols-outlined text-[14px]">table_chart</span>
+            [CONN_TBL_06] AKTİF BAĞLANTILAR
+            <span class="text-primary ml-2" id="conn-count"></span>
+          </div>
+          <div class="flex items-center gap-3">
+            <label class="flex items-center gap-2 mono text-xs text-on-surface-variant cursor-pointer">
+              <input type="checkbox" id="filter-established" class="accent-primary" checked>
+              Sadece KURULU
+            </label>
+            <input id="filter-ip" type="text" placeholder="IP filtrele..."
+              class="bg-surface-container-highest border border-outline-variant/30 text-on-surface mono text-xs px-3 py-1.5 rounded focus:outline-none focus:border-primary transition-all w-40"/>
+          </div>
+        </div>
+        <div class="overflow-x-auto max-h-96 terminal-scroll overflow-y-auto">
+          <table class="w-full text-left mono text-xs">
+            <thead class="sticky top-0 z-10">
+              <tr class="border-b border-outline-variant/30 bg-surface-container-highest text-[10px] text-on-surface-variant tracking-widest">
+                <th class="px-4 py-3">PROTO</th>
+                <th class="px-4 py-3">YEREL ADRES</th>
+                <th class="px-4 py-3">UZAK ADRES</th>
+                <th class="px-4 py-3">SERVİS</th>
+                <th class="px-4 py-3">DURUM</th>
+                <th class="px-4 py-3 text-right">PID</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant/10 text-on-surface" id="conn-table">
+              <tr><td colspan="6" class="px-4 py-8 text-center text-on-surface-variant">Bağlanılıyor...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+    <div class="h-8"></div>
+  </main>
+</div>
+
+<script>
+// ── Bağlantı ──────────────────────────────────────────────────────────────────
+const WS_PROTO = location.protocol === 'https:' ? 'wss' : 'ws';
+const connLbl  = document.getElementById('conn-lbl');
+const lastUpd  = document.getElementById('last-update');
+
+// ── Chart.js: Geçmiş (line) ───────────────────────────────────────────────────
+const HIST_MAX = 60;
+const histLabels = Array(HIST_MAX).fill('');
+const histTotal  = Array(HIST_MAX).fill(null);
+const histEst    = Array(HIST_MAX).fill(null);
+
+const histChart = new Chart(document.getElementById('history-chart'), {
+  type: 'line',
+  data: {
+    labels: histLabels,
+    datasets: [
+      { label:'Toplam', data:histTotal, borderColor:'#bccabb', backgroundColor:'rgba(188,202,187,.06)', borderWidth:1.5, pointRadius:0, tension:.4, fill:true },
+      { label:'Kurulu', data:histEst,   borderColor:'#6bfb9a', backgroundColor:'rgba(107,251,154,.08)', borderWidth:2,   pointRadius:0, tension:.4, fill:true },
+    ]
+  },
+  options: {
+    animation:false, responsive:true, maintainAspectRatio:true,
+    plugins:{ legend:{ labels:{ color:'#bccabb', font:{ family:'JetBrains Mono', size:11 } } } },
+    scales:{
+      x:{ ticks:{ display:false }, grid:{ color:'rgba(61,74,62,.4)' } },
+      y:{ min:0, ticks:{ color:'#bccabb', font:{ family:'JetBrains Mono', size:10 } }, grid:{ color:'rgba(61,74,62,.4)' } }
+    }
+  }
+});
+
+function pushHistory(history) {
+  const last = history.slice(-HIST_MAX);
+  for (let i = 0; i < HIST_MAX; i++) {
+    const h = last[i - (HIST_MAX - last.length)];
+    histTotal[i] = h ? h.total       : null;
+    histEst[i]   = h ? h.established : null;
+  }
+  histChart.update('none');
+}
+
+// ── Chart.js: Protokol (doughnut) ────────────────────────────────────────────
+const COLORS = ['#6bfb9a','#adc6ff','#ffd7d5','#4ade80','#60a5fa','#f472b6','#a78bfa','#fb923c','#34d399','#f87171'];
+
+const protoChart = new Chart(document.getElementById('proto-chart'), {
+  type:'doughnut',
+  data:{ labels:[], datasets:[{ data:[], backgroundColor:COLORS, borderColor:'#0c1324', borderWidth:2 }] },
+  options:{
+    animation:false, responsive:true,
+    plugins:{
+      legend:{ position:'bottom', labels:{ color:'#bccabb', font:{ family:'JetBrains Mono', size:10 }, boxWidth:12, padding:10 } }
+    }
+  }
+});
+
+function updateProtoChart(dist) {
+  const keys = Object.keys(dist);
+  const vals = Object.values(dist);
+  protoChart.data.labels   = keys;
+  protoChart.data.datasets[0].data = vals;
+  protoChart.update('none');
+  document.getElementById('stat-protocols').textContent = keys.length;
+}
+
+// ── Top bar helper ────────────────────────────────────────────────────────────
+function renderTopList(containerId, data, colorClass = 'bg-primary') {
+  const el = document.getElementById(containerId);
+  if (!Object.keys(data).length) {
+    el.innerHTML = '<div class="text-on-surface-variant text-[11px]">Veri yok</div>';
+    return;
+  }
+  const max = Math.max(...Object.values(data));
+  el.innerHTML = Object.entries(data).map(([label, count]) => `
+    <div>
+      <div class="flex justify-between text-[11px] mb-1">
+        <span class="text-on-surface truncate max-w-[180px]">${esc(label)}</span>
+        <span class="text-on-surface-variant ml-2 shrink-0">${count}</span>
+      </div>
+      <div class="w-full bg-surface-container-highest h-1.5 rounded-full overflow-hidden">
+        <div class="${colorClass} h-full rounded-full transition-all duration-500" style="width:${Math.round((count/max)*100)}%"></div>
+      </div>
+    </div>`).join('');
+}
+
+// ── Durum dağılımı ────────────────────────────────────────────────────────────
+const STATUS_COLORS_MAP = {
+  'KURULU':         'bg-primary',
+  'DİNLİYOR':       'bg-secondary',
+  'BEKLEMEDE':      'bg-yellow-400',
+  'KAPANMAK_ÜZERE': 'bg-orange-400',
+};
+
+function renderStatusDist(data) {
+  const el = document.getElementById('status-dist');
+  if (!Object.keys(data).length) { el.innerHTML = '<div class="text-on-surface-variant text-[11px]">Veri yok</div>'; return; }
+  const max = Math.max(...Object.values(data));
+  el.innerHTML = Object.entries(data).map(([status, count]) => {
+    const bar = STATUS_COLORS_MAP[status] || 'bg-outline';
+    return `
+    <div>
+      <div class="flex justify-between text-[11px] mb-1">
+        <span class="text-on-surface">${esc(status)}</span>
+        <span class="text-on-surface-variant">${count}</span>
+      </div>
+      <div class="w-full bg-surface-container-highest h-1.5 rounded-full overflow-hidden">
+        <div class="${bar} h-full rounded-full transition-all duration-500" style="width:${Math.round((count/max)*100)}%"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Bağlantı tablosu ──────────────────────────────────────────────────────────
+let allConnections = [];
+
+const filterEstablished = document.getElementById('filter-established');
+const filterIp          = document.getElementById('filter-ip');
+[filterEstablished, filterIp].forEach(el => el.addEventListener('input', renderTable));
+
+function statusBadge(s) {
+  const cls = {
+    'KURULU':         'bg-primary/10 border-primary/20 text-primary',
+    'DİNLİYOR':       'bg-secondary/10 border-secondary/20 text-secondary',
+    'BEKLEMEDE':      'bg-yellow-900/30 border-yellow-500/30 text-yellow-300',
+    'KAPANMAK_ÜZERE': 'bg-orange-900/30 border-orange-500/30 text-orange-300',
+  }[s] || 'bg-surface-variant border-outline-variant text-on-surface-variant';
+  return `<span class="inline-flex items-center border px-2 py-0.5 rounded text-[10px] ${cls}">${esc(s)}</span>`;
+}
+
+function renderTable() {
+  const onlyEst = filterEstablished.checked;
+  const ipQ     = filterIp.value.trim().toLowerCase();
+
+  let list = allConnections;
+  if (onlyEst)  list = list.filter(c => c.status === 'KURULU');
+  if (ipQ)      list = list.filter(c => (c.remote || '').toLowerCase().includes(ipQ) || (c.local || '').toLowerCase().includes(ipQ));
+
+  document.getElementById('conn-count').textContent = `${list.length} bağlantı`;
+
+  if (!list.length) {
+    document.getElementById('conn-table').innerHTML =
+      '<tr><td colspan="6" class="px-4 py-6 text-center text-on-surface-variant">Bağlantı bulunamadı.</td></tr>';
+    return;
+  }
+
+  document.getElementById('conn-table').innerHTML = list.slice(0, 200).map(c => `
+    <tr class="hover:bg-primary/5 transition-colors">
+      <td class="px-4 py-2 text-on-surface-variant">${esc(c.proto)}</td>
+      <td class="px-4 py-2 text-secondary">${esc(c.local)}</td>
+      <td class="px-4 py-2 text-on-surface">${esc(c.remote)}</td>
+      <td class="px-4 py-2 text-primary">${esc(c.service)}</td>
+      <td class="px-4 py-2">${statusBadge(c.status)}</td>
+      <td class="px-4 py-2 text-right text-on-surface-variant">${c.pid ?? '—'}</td>
+    </tr>`).join('');
+}
+
+function esc(v) {
+  return String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── WebSocket bağlantısı ──────────────────────────────────────────────────────
+let ws = null;
+
+function connect() {
+  ws = new WebSocket(`${WS_PROTO}://${location.host}/ws/traffic/connections`);
+
+  ws.onopen = () => {
+    connLbl.textContent = 'CANLI';
+    connLbl.classList.add('text-primary');
+  };
+
+  ws.onmessage = (e) => {
+    const d = JSON.parse(e.data);
+    if (d.type === 'error') { connLbl.textContent = 'HATA: ' + d.message; return; }
+
+    // Özet
+    document.getElementById('stat-total').textContent       = d.stats.total;
+    checkTrafficSpike(d.stats.total);
+    document.getElementById('stat-established').textContent = d.stats.established;
+    document.getElementById('stat-listening').textContent   = d.stats.listening;
+    lastUpd.textContent = new Date().toLocaleTimeString('tr-TR');
+
+    // Grafikler
+    pushHistory(d.history || []);
+    updateProtoChart(d.protocol_dist || {});
+    renderTopList('top-ips',      d.top_remote_ips || {}, 'bg-primary');
+    renderTopList('top-services', d.top_services   || {}, 'bg-secondary');
+    renderStatusDist(d.status_dist || {});
+
+    // Tablo
+    allConnections = d.connections || [];
+    renderTable();
+  };
+
+  ws.onerror  = () => { connLbl.textContent = 'BAĞLANTI HATASI'; connLbl.classList.remove('text-primary'); };
+  ws.onclose  = () => {
+    connLbl.textContent = 'BAĞLANTI KESİLDİ — yeniden deneniyor...';
+    setTimeout(connect, 3000);
+  };
+}
+
+connect();
+
+let _prevTotal = 0;
+function checkTrafficSpike(total) {
+  if (_prevTotal > 0 && total > _prevTotal * 1.5 && total - _prevTotal > 20) {
+    addNotification('Trafik Artışı', `Aktif bağlantı sayısı ${_prevTotal} → ${total} oldu`, 'warn');
+  }
+  _prevTotal = total;
+}
+</script>
+<script src="/static/notifications.js"></script>
+</body>
+</html>

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html class="dark" lang="tr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AETHER_SCAN - CVE Sorgulama</title>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "background":               "#0c1324",
+          "surface-dim":              "#0c1324",
+          "surface-container":        "#191f31",
+          "surface-container-low":    "#151b2d",
+          "surface-container-high":   "#23293c",
+          "surface-container-highest":"#2e3447",
+          "surface-container-lowest": "#070d1f",
+          "surface-variant":          "#2e3447",
+          "on-surface":               "#dce1fb",
+          "on-surface-variant":       "#bccabb",
+          "on-background":            "#dce1fb",
+          "primary":                  "#6bfb9a",
+          "on-primary":               "#003919",
+          "secondary":                "#adc6ff",
+          "error":                    "#ffb4ab",
+          "outline-variant":          "#3d4a3e",
+          "outline":                  "#869486",
+        },
+        fontFamily: {
+          mono: ["JetBrains Mono", "monospace"],
+          sans: ["Hanken Grotesk", "sans-serif"],
+        }
+      }
+    }
+  }
+</script>
+<style>
+  body { font-family:"Hanken Grotesk",sans-serif; }
+  .mono { font-family:"JetBrains Mono",monospace; }
+  .pulse-glow { animation:pg 2s cubic-bezier(.4,0,.6,1) infinite; }
+  @keyframes pg {
+    0%,100%{box-shadow:0 0 8px rgba(107,251,154,.2);}
+    50%{box-shadow:0 0 18px rgba(107,251,154,.6);}
+  }
+  .spin { animation:spin 1.2s linear infinite; display:inline-block; }
+  @keyframes spin { to{transform:rotate(360deg);} }
+</style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+
+<!-- TopNav -->
+<header class="bg-surface-dim/80 backdrop-blur-xl border-b border-outline-variant/30 fixed top-0 w-full flex justify-between items-center h-16 px-8 z-50">
+  <div class="flex items-center gap-8">
+    <a href="/" class="text-2xl font-bold tracking-tighter text-primary mono uppercase">AETHER_SCAN</a>
+    <nav class="hidden md:flex gap-2 mono text-xs">
+      <a href="/" class="text-on-surface-variant hover:text-on-surface hover:bg-primary/10 px-3 py-2 rounded-lg transition-all">Port Tarayıcı</a>
+      <a href="/static/monitor.html" class="text-on-surface-variant hover:text-on-surface hover:bg-primary/10 px-3 py-2 rounded-lg transition-all">Canlı İzleme</a>
+      <a href="/static/cve.html" class="text-primary border-b-2 border-primary pb-0.5 px-3 py-2 rounded-t-lg">CVE Sorgulama</a>
+      <a href="/static/traffic.html" class="text-on-surface-variant hover:text-on-surface hover:bg-primary/10 px-3 py-2 rounded-lg transition-all">Trafik Analizi</a>
+    </nav>
+  </div>
+  <div class="relative">
+    <button id="notif-btn" onclick="toggleNotifications()" class="relative text-on-surface-variant hover:text-primary transition-colors w-9 h-9 flex items-center justify-center rounded-full hover:bg-primary/10">
+      <span class="material-symbols-outlined text-[20px]">notifications</span>
+      <span id="notif-badge" class="hidden absolute -top-0.5 -right-0.5 bg-error text-[#000] mono text-[9px] font-bold min-w-[16px] h-4 rounded-full flex items-center justify-center px-0.5">0</span>
+    </button>
+    <div id="notif-panel" class="hidden absolute right-0 top-11 w-80 bg-surface-container border border-outline-variant/30 rounded-xl shadow-2xl z-[200] overflow-hidden mono text-xs">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-outline-variant/20">
+        <span class="text-on-surface font-bold tracking-widest text-[10px]">BİLDİRİMLER</span>
+        <button onclick="clearNotifications()" class="text-on-surface-variant hover:text-error transition-colors text-[10px] tracking-widest">TEMİZLE</button>
+      </div>
+      <div id="notif-list" class="max-h-80 overflow-y-auto"></div>
+    </div>
+  </div>
+</header>
+
+<!-- Layout -->
+<div class="flex flex-1 mt-16">
+
+  <!-- Sidebar -->
+  <aside class="hidden md:flex flex-col bg-surface-container-lowest/80 border-r border-outline-variant/20 w-64 fixed top-16 h-[calc(100vh-64px)] py-4 z-40 mono text-xs">
+    <div class="px-6 mb-4 mt-2">
+      <div class="text-on-surface font-bold">NODE_01</div>
+      <div class="text-primary mt-1 flex items-center gap-1">
+        <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span> CVE_SORGU
+      </div>
+    </div>
+
+    <nav class="flex-1 space-y-1">
+      <a href="/" class="text-on-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all">
+        <span class="material-symbols-outlined text-[18px]">lan</span> Port Tarayıcı
+      </a>
+      <a href="/static/monitor.html" class="text-on-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all">
+        <span class="material-symbols-outlined text-[18px]">radar</span> Canlı İzleme
+      </a>
+      <a href="/static/cve.html" class="bg-primary/20 text-primary border-l-4 border-primary px-4 py-3 flex items-center gap-3">
+        <span class="material-symbols-outlined text-[18px]">security</span> CVE Sorgulama
+      </a>
+      <a href="/static/traffic.html" class="text-on-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all">
+        <span class="material-symbols-outlined text-[18px]">analytics</span> Trafik Analizi
+      </a>
+    </nav>
+    <div class="border-t border-outline-variant/20 pt-3 mt-2 space-y-1">
+      <a href="/static/support.html" class="text-on-surface-variant px-4 py-2.5 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all duration-150">
+        <span class="material-symbols-outlined text-[18px]">help_outline</span> Destek
+      </a>
+      <a href="/static/logs.html" class="text-on-surface-variant px-4 py-2.5 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all duration-150">
+        <span class="material-symbols-outlined text-[18px]">history</span> Günlükler
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="flex-1 md:ml-64 p-8 overflow-y-auto">
+
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold tracking-tight text-on-surface mb-1">CVE Sorgulama</h1>
+      <p class="mono text-xs text-on-surface-variant">NVD (NIST) ve CVE.org veritabanlarında zafiyet arama.</p>
+    </div>
+
+    <!-- Arama Paneli -->
+    <section class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-6 mb-6 relative overflow-hidden group">
+      <div class="absolute top-0 left-0 w-1 h-full bg-primary opacity-50 group-hover:opacity-100 transition-opacity"></div>
+      <div class="mono text-[10px] text-on-surface-variant mb-5 tracking-widest flex items-center gap-2">
+        <span class="material-symbols-outlined text-[14px]">manage_search</span>
+        [QUERY_01] ZAFİYET SORGULAMA
+      </div>
+
+      <form onsubmit="event.preventDefault(); runSearch();" class="flex flex-col gap-4">
+        <div class="flex flex-col lg:flex-row gap-4 items-end">
+          <!-- Arama kutusu -->
+          <div class="flex-1 w-full">
+            <label class="block mono text-xs text-primary mb-2">CVE-ID veya Ürün Adı</label>
+            <div class="relative">
+              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">shield_question</span>
+              <input id="query-input" type="text"
+                placeholder="CVE-2024-1234  veya  nginx  veya  openssl 3.0"
+                class="w-full bg-surface-container-highest border-b-2 border-outline-variant text-on-surface mono text-sm pl-10 pr-4 py-3 focus:outline-none focus:border-primary focus:bg-surface-dim transition-all rounded-t-md"
+                oninput="detectMode(this.value)"/>
+            </div>
+            <!-- Mod göstergesi -->
+            <div class="mt-1 mono text-[10px] text-on-surface-variant" id="mode-hint">
+              CVE-ID veya ürün/keyword gir
+            </div>
+          </div>
+
+          <!-- Limit (keyword modunda) -->
+          <div class="w-full lg:w-36" id="limit-wrap">
+            <label class="block mono text-xs text-secondary mb-2">Sonuç Limiti</label>
+            <select id="limit-select"
+              class="w-full bg-surface-container-highest border-b-2 border-outline-variant text-on-surface mono text-sm px-3 py-3 focus:outline-none focus:border-secondary focus:bg-surface-dim transition-all rounded-t-md appearance-none cursor-pointer">
+              <option value="10">10</option>
+              <option value="20" selected>20</option>
+              <option value="50">50</option>
+            </select>
+          </div>
+
+          <!-- Butonlar -->
+          <div class="flex gap-3 w-full lg:w-auto">
+            <button type="button" onclick="clearResults()"
+              class="px-5 py-3 border border-outline-variant text-on-surface-variant hover:bg-surface-variant mono text-sm rounded-lg transition-all flex items-center gap-2">
+              <span class="material-symbols-outlined text-[16px]">clear_all</span> TEMİZLE
+            </button>
+            <button id="btn-search" type="submit"
+              class="px-7 py-3 bg-primary text-on-primary font-bold mono text-sm rounded-lg hover:bg-primary-fixed transition-all pulse-glow flex items-center gap-2">
+              <span class="material-symbols-outlined text-[16px]" id="icon-search">search</span>
+              <span id="text-search">SORGULA</span>
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <!-- Hata mesajı -->
+      <div id="search-error" class="hidden mt-3 flex items-center gap-2 mono text-xs text-error">
+        <span class="material-symbols-outlined text-[14px]">error</span>
+        <span id="error-msg"></span>
+      </div>
+    </section>
+
+    <!-- Sonuç özeti -->
+    <div class="mb-4 mono text-xs text-on-surface-variant flex items-center gap-2" id="result-summary"></div>
+
+    <!-- Sonuçlar -->
+    <div id="results-container" class="space-y-4"></div>
+
+    <div class="h-8"></div>
+  </main>
+</div>
+
+<script>
+// ── Yardımcılar ───────────────────────────────────────────────────────────────
+const CVE_ID_RE = /^CVE-\d{4}-\d{4,}$/i;
+
+function esc(v) {
+  return String(v ?? '')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function severityClass(s) {
+  return {
+    CRITICAL: 'bg-red-900/40 border-red-500/40 text-red-300',
+    HIGH:     'bg-orange-900/40 border-orange-500/40 text-orange-300',
+    MEDIUM:   'bg-yellow-900/40 border-yellow-500/40 text-yellow-300',
+    LOW:      'bg-blue-900/40 border-blue-500/40 text-blue-300',
+    NONE:     'bg-surface-variant border-outline-variant text-on-surface-variant',
+  }[s] || 'bg-surface-variant border-outline-variant text-on-surface-variant';
+}
+
+function scoreColor(score) {
+  if (!score) return 'text-on-surface-variant';
+  if (score >= 9)   return 'text-red-300';
+  if (score >= 7)   return 'text-orange-300';
+  if (score >= 4)   return 'text-yellow-300';
+  return 'text-blue-300';
+}
+
+function fmtDate(iso) {
+  if (!iso) return '—';
+  return iso.slice(0, 10);
+}
+
+// ── Mod tespiti ───────────────────────────────────────────────────────────────
+const modeHint    = document.getElementById('mode-hint');
+const limitWrap   = document.getElementById('limit-wrap');
+
+function detectMode(val) {
+  val = val.trim();
+  if (!val) {
+    modeHint.textContent = 'CVE-ID veya ürün/keyword gir';
+    modeHint.className = 'mt-1 mono text-[10px] text-on-surface-variant';
+    return;
+  }
+  if (CVE_ID_RE.test(val)) {
+    modeHint.innerHTML = '<span class="text-primary">✦ CVE-ID modu</span> — tekil zafiyet detayı';
+    limitWrap.classList.add('hidden');
+  } else {
+    modeHint.innerHTML = '<span class="text-secondary">✦ Keyword modu</span> — ürün/servis araması';
+    limitWrap.classList.remove('hidden');
+  }
+}
+
+// ── UI durum ──────────────────────────────────────────────────────────────────
+const btnSearch = document.getElementById('btn-search');
+const iconSearch = document.getElementById('icon-search');
+const textSearch = document.getElementById('text-search');
+const searchError = document.getElementById('search-error');
+const errorMsg    = document.getElementById('error-msg');
+const resultSummary = document.getElementById('result-summary');
+const resultsContainer = document.getElementById('results-container');
+
+function setLoading(on) {
+  btnSearch.disabled = on;
+  if (on) {
+    iconSearch.className = 'material-symbols-outlined text-[16px] spin';
+    textSearch.textContent = 'SORGULANIYOR...';
+    btnSearch.classList.remove('pulse-glow');
+  } else {
+    iconSearch.className = 'material-symbols-outlined text-[16px]';
+    iconSearch.textContent = 'search';
+    textSearch.textContent = 'SORGULA';
+    btnSearch.classList.add('pulse-glow');
+  }
+}
+
+function showError(msg) {
+  errorMsg.textContent = msg;
+  searchError.classList.remove('hidden');
+}
+
+function hideError() {
+  searchError.classList.add('hidden');
+}
+
+function clearResults() {
+  resultsContainer.innerHTML = '';
+  resultSummary.innerHTML = '';
+  hideError();
+  document.getElementById('query-input').value = '';
+  modeHint.textContent = 'CVE-ID veya ürün/keyword gir';
+  modeHint.className = 'mt-1 mono text-[10px] text-on-surface-variant';
+  limitWrap.classList.remove('hidden');
+}
+
+// ── CVE kartı oluştur ─────────────────────────────────────────────────────────
+function buildCard(cve) {
+  const sevCls   = severityClass(cve.cvss_severity);
+  const scoreCls = scoreColor(cve.cvss_score);
+  const score    = cve.cvss_score != null ? cve.cvss_score.toFixed(1) : '—';
+
+  const affected = cve.affected?.length
+    ? cve.affected.slice(0, 6).map(a => `<span class="bg-surface-container border border-outline-variant/30 text-on-surface-variant px-2 py-0.5 rounded text-[10px]">${esc(a)}</span>`).join('')
+    : '';
+
+  const refs = cve.references?.length
+    ? cve.references.slice(0, 4).map(r =>
+        `<a href="${esc(r.url)}" target="_blank" rel="noopener" class="flex items-center gap-1 text-secondary hover:text-primary transition-colors truncate max-w-xs">
+          <span class="material-symbols-outlined text-[12px]">open_in_new</span>${esc(r.url)}
+        </a>`).join('')
+    : '<span class="text-on-surface-variant">Referans yok</span>';
+
+  const div = document.createElement('div');
+  div.className = 'bg-surface-container-low border border-outline-variant/30 rounded-xl overflow-hidden';
+  div.innerHTML = `
+    <!-- Kart başlığı -->
+    <div class="px-6 py-4 border-b border-outline-variant/30 bg-surface-container/60 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div class="flex items-center gap-3 flex-wrap">
+        <span class="mono font-bold text-primary text-sm">${esc(cve.id)}</span>
+        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded border mono text-[10px] font-bold ${sevCls}">
+          ${esc(cve.cvss_severity)}
+        </span>
+        ${cve.source === 'CVE.org'
+          ? '<span class="mono text-[9px] bg-secondary/10 border border-secondary/20 text-secondary px-2 py-0.5 rounded">CVE.org</span>'
+          : '<span class="mono text-[9px] bg-primary/10 border border-primary/20 text-primary px-2 py-0.5 rounded">NVD</span>'}
+      </div>
+      <div class="flex items-center gap-4 mono text-xs text-on-surface-variant shrink-0">
+        <span>Yayın: ${fmtDate(cve.published)}</span>
+        <span>Güncelleme: ${fmtDate(cve.modified)}</span>
+      </div>
+    </div>
+
+    <!-- İçerik -->
+    <div class="px-6 py-5 grid grid-cols-1 lg:grid-cols-[1fr_180px] gap-6">
+      <div class="space-y-4">
+        <!-- Açıklama -->
+        <div>
+          <div class="mono text-[10px] text-on-surface-variant tracking-widest mb-2">AÇIKLAMA</div>
+          <p class="text-on-surface text-sm leading-relaxed">${esc(cve.description)}</p>
+        </div>
+
+        <!-- Etkilenen ürünler -->
+        ${affected ? `
+        <div>
+          <div class="mono text-[10px] text-on-surface-variant tracking-widest mb-2">ETKİLENEN ÜRÜNLER</div>
+          <div class="flex flex-wrap gap-2">${affected}</div>
+        </div>` : ''}
+
+        <!-- Referanslar -->
+        <div>
+          <div class="mono text-[10px] text-on-surface-variant tracking-widest mb-2">REFERANSLAR</div>
+          <div class="space-y-1 mono text-[11px]">${refs}</div>
+        </div>
+      </div>
+
+      <!-- CVSS paneli -->
+      <div class="bg-surface-container border border-outline-variant/20 rounded-lg p-4 flex flex-col items-center justify-center text-center gap-2">
+        <div class="mono text-[10px] text-on-surface-variant tracking-widest">CVSS SKORU</div>
+        <div class="text-5xl font-bold mono ${scoreCls}">${score}</div>
+        <div class="mono text-[10px] text-on-surface-variant">${esc(cve.cvss_version || '—')}</div>
+        ${cve.cvss_vector ? `
+        <div class="mt-2 w-full">
+          <div class="mono text-[9px] text-on-surface-variant mb-1">VEKTÖR</div>
+          <div class="mono text-[9px] text-on-surface break-all bg-surface-container-highest border border-outline-variant/20 rounded p-2">${esc(cve.cvss_vector)}</div>
+        </div>` : ''}
+      </div>
+    </div>
+  `;
+  return div;
+}
+
+// ── Ana arama fonksiyonu ──────────────────────────────────────────────────────
+async function runSearch() {
+  const query = document.getElementById('query-input').value.trim();
+  if (!query) { showError('Lütfen bir CVE-ID veya ürün adı gir.'); return; }
+
+  hideError();
+  setLoading(true);
+  resultsContainer.innerHTML = '';
+  resultSummary.innerHTML = '';
+
+  const isCveId = CVE_ID_RE.test(query);
+
+  try {
+    if (isCveId) {
+      // Tekil CVE
+      const resp = await fetch(`/api/cve/${encodeURIComponent(query.toUpperCase())}`);
+      if (!resp.ok) {
+        const err = await resp.json();
+        throw new Error(err.detail || `HTTP ${resp.status}`);
+      }
+      const cve = await resp.json();
+      resultSummary.innerHTML = `<span class="material-symbols-outlined text-[14px] text-primary">verified</span> <span class="text-primary">${esc(cve.id)}</span> bulundu`;
+      resultsContainer.appendChild(buildCard(cve));
+      notifyHighCVSS([cve]);
+    } else {
+      // Keyword araması
+      const limit = document.getElementById('limit-select').value;
+      const resp  = await fetch(`/api/cve/search/${encodeURIComponent(query)}?limit=${limit}`);
+      if (!resp.ok) {
+        const err = await resp.json();
+        throw new Error(err.detail || `HTTP ${resp.status}`);
+      }
+      const list = await resp.json();
+      if (!list.length) {
+        resultSummary.innerHTML = `"${esc(query)}" için sonuç bulunamadı.`;
+      } else {
+        resultSummary.innerHTML = `<span class="material-symbols-outlined text-[14px] text-primary">search</span> "${esc(query)}" için <span class="text-primary font-bold">${list.length}</span> zafiyet bulundu`;
+        list.forEach(cve => resultsContainer.appendChild(buildCard(cve)));
+        notifyHighCVSS(list);
+      }
+    }
+  } catch (e) {
+    showError(e.message);
+  } finally {
+    setLoading(false);
+  }
+}
+
+// Enter ile arama
+document.getElementById('query-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') runSearch();
+});
+
+function notifyHighCVSS(list) {
+  const critical = list.filter(c => (c.cvss_score ?? 0) >= 9.0);
+  const high     = list.filter(c => (c.cvss_score ?? 0) >= 7.0 && (c.cvss_score ?? 0) < 9.0);
+  if (critical.length) addNotification('Kritik CVE Tespit Edildi', `${critical.length} kritik zafiyet (CVSS ≥ 9.0): ${critical.map(c=>c.id).slice(0,3).join(', ')}`, 'error');
+  else if (high.length) addNotification('Yüksek Riskli CVE', `${high.length} yüksek riskli zafiyet (CVSS ≥ 7.0)`, 'warn');
+}
+</script>
+<script src="/static/notifications.js"></script>
+</body>
+</html>

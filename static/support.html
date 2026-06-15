@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html class="dark" lang="tr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AETHER_SCAN - Destek</title>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "background":               "#0c1324",
+          "surface-dim":              "#0c1324",
+          "surface-container":        "#191f31",
+          "surface-container-low":    "#151b2d",
+          "surface-container-high":   "#23293c",
+          "surface-container-highest":"#2e3447",
+          "surface-container-lowest": "#070d1f",
+          "surface-variant":          "#2e3447",
+          "on-surface":               "#dce1fb",
+          "on-surface-variant":       "#bccabb",
+          "on-background":            "#dce1fb",
+          "primary":                  "#6bfb9a",
+          "on-primary":               "#003919",
+          "secondary":                "#adc6ff",
+          "error":                    "#ffb4ab",
+          "outline-variant":          "#3d4a3e",
+          "outline":                  "#869486",
+        },
+        fontFamily: {
+          mono: ["JetBrains Mono", "monospace"],
+          sans: ["Hanken Grotesk", "sans-serif"],
+        }
+      }
+    }
+  }
+</script>
+<style>
+  body { font-family: "Hanken Grotesk", sans-serif; }
+  .mono { font-family: "JetBrains Mono", monospace; }
+</style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+
+<!-- TopNav -->
+<header class="bg-surface-dim/80 backdrop-blur-xl border-b border-outline-variant/30 fixed top-0 w-full flex justify-between items-center h-16 px-8 z-50">
+  <div class="flex items-center gap-8">
+    <a href="/" class="text-2xl font-bold tracking-tighter text-primary mono uppercase">AETHER_SCAN</a>
+    <nav class="hidden md:flex gap-2 mono text-xs">
+      <a href="/" class="text-on-surface-variant hover:text-on-surface hover:bg-primary/10 px-3 py-2 rounded-lg transition-all">Port Tarayıcı</a>
+      <a href="/static/monitor.html" class="text-on-surface-variant hover:text-on-surface hover:bg-primary/10 px-3 py-2 rounded-lg transition-all">Canlı İzleme</a>
+      <a href="/static/cve.html" class="text-on-surface-variant hover:text-on-surface hover:bg-primary/10 px-3 py-2 rounded-lg transition-all">CVE Sorgulama</a>
+      <a href="/static/traffic.html" class="text-on-surface-variant hover:text-on-surface hover:bg-primary/10 px-3 py-2 rounded-lg transition-all">Trafik Analizi</a>
+    </nav>
+  </div>
+</header>
+
+<!-- Layout -->
+<div class="flex flex-1 mt-16">
+
+  <!-- Sidebar -->
+  <aside class="hidden md:flex flex-col bg-surface-container-lowest/80 border-r border-outline-variant/20 w-64 fixed top-16 h-[calc(100vh-64px)] py-4 z-40 mono text-xs">
+    <div class="px-6 mb-4 mt-2">
+      <div class="text-on-surface font-bold">NODE_01</div>
+      <div class="text-primary mt-1 flex items-center gap-1">
+        <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span> DESTEK
+      </div>
+    </div>
+    <nav class="flex-1 space-y-1">
+      <a href="/" class="text-on-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all duration-150">
+        <span class="material-symbols-outlined text-[18px]">lan</span> Port Tarayıcı
+      </a>
+      <a href="/static/monitor.html" class="text-on-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all duration-150">
+        <span class="material-symbols-outlined text-[18px]">radar</span> Canlı İzleme
+      </a>
+      <a href="/static/cve.html" class="text-on-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all duration-150">
+        <span class="material-symbols-outlined text-[18px]">security</span> CVE Sorgulama
+      </a>
+      <a href="/static/traffic.html" class="text-on-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all duration-150">
+        <span class="material-symbols-outlined text-[18px]">analytics</span> Trafik Analizi
+      </a>
+    </nav>
+    <div class="border-t border-outline-variant/20 pt-3 mt-2 space-y-1">
+      <a href="/static/support.html" class="bg-primary/20 text-primary border-l-4 border-primary px-4 py-2.5 flex items-center gap-3">
+        <span class="material-symbols-outlined text-[18px]">help_outline</span> Destek
+      </a>
+      <a href="/static/logs.html" class="text-on-surface-variant px-4 py-2.5 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all duration-150">
+        <span class="material-symbols-outlined text-[18px]">history</span> Günlükler
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="flex-1 md:ml-64 p-8 overflow-y-auto">
+
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold tracking-tight text-on-surface mb-1">Destek & Hakkında</h1>
+      <p class="mono text-xs text-on-surface-variant">Platform dokümantasyonu ve geliştirici bilgisi.</p>
+    </div>
+
+    <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+
+      <!-- Geliştirici Künyesi -->
+      <div class="xl:col-span-4">
+        <section class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-6 relative overflow-hidden group h-full">
+          <div class="absolute top-0 left-0 w-1 h-full bg-primary opacity-50 group-hover:opacity-100 transition-opacity"></div>
+          <div class="mono text-[10px] text-on-surface-variant mb-5 tracking-widest flex items-center gap-2">
+            <span class="material-symbols-outlined text-[14px]">person</span>
+            [DEV_01] GELİŞTİRİCİ KÜNYESİ
+          </div>
+
+          <!-- Avatar -->
+          <div class="flex flex-col items-center text-center mb-6">
+            <div class="w-20 h-20 rounded-full bg-primary/10 border-2 border-primary/40 flex items-center justify-center mb-4">
+              <span class="text-3xl font-bold text-primary mono">S</span>
+            </div>
+            <h2 class="text-xl font-bold text-on-surface mb-1">Sena</h2>
+            <p class="mono text-xs text-primary">Siber Güvenlik / Backend Developer</p>
+          </div>
+
+          <!-- Bio -->
+          <p class="text-sm text-on-surface-variant leading-relaxed mb-6 text-center">
+            Python, FastAPI ve ağ güvenliği üzerine çalışan bir geliştirici.
+            AETHER_SCAN kişisel bir güvenlik araştırma projesidir.
+          </p>
+
+          <!-- Linkler -->
+          <div class="space-y-2">
+            <a href="https://github.com/themlie" target="_blank" class="flex items-center gap-3 px-4 py-2.5 rounded-lg border border-outline-variant/30 hover:border-primary/50 hover:bg-primary/5 transition-all group/link">
+              <span class="material-symbols-outlined text-[18px] text-on-surface-variant group-hover/link:text-primary transition-colors">code</span>
+              <span class="mono text-xs text-on-surface-variant group-hover/link:text-primary transition-colors">github.com/themlie</span>
+              <span class="material-symbols-outlined text-[14px] text-on-surface-variant ml-auto">open_in_new</span>
+            </a>
+            <a href="https://www.linkedin.com/in/sena-sahin/" target="_blank" class="flex items-center gap-3 px-4 py-2.5 rounded-lg border border-outline-variant/30 hover:border-primary/50 hover:bg-primary/5 transition-all group/link">
+              <span class="material-symbols-outlined text-[18px] text-on-surface-variant group-hover/link:text-primary transition-colors">work</span>
+              <span class="mono text-xs text-on-surface-variant group-hover/link:text-primary transition-colors">linkedin.com/in/sena-sahin</span>
+              <span class="material-symbols-outlined text-[14px] text-on-surface-variant ml-auto">open_in_new</span>
+            </a>
+          </div>
+        </section>
+      </div>
+
+      <!-- Sağ Kolon -->
+      <div class="xl:col-span-8 flex flex-col gap-6">
+
+        <!-- Platform Dokümantasyonu -->
+        <section class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-6 relative overflow-hidden group">
+          <div class="absolute top-0 left-0 w-1 h-full bg-secondary opacity-50 group-hover:opacity-100 transition-opacity"></div>
+          <div class="mono text-[10px] text-on-surface-variant mb-5 tracking-widest flex items-center gap-2">
+            <span class="material-symbols-outlined text-[14px]">menu_book</span>
+            [DOC_02] PLATFORM DOKÜMANTASYONU
+          </div>
+
+          <p class="text-sm text-on-surface-variant leading-relaxed mb-6">
+            AETHER_SCAN, ağ güvenliği testleri için tasarlanmış gerçek zamanlı bir tarama ve izleme platformudur.
+            Python tabanlı asenkron bir backend ile modern bir web arayüzü bir araya getirilmiştir.
+          </p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <div class="bg-surface-container-lowest/60 rounded-lg p-4 border border-outline-variant/20">
+              <div class="mono text-[10px] text-primary tracking-widest mb-3">BACKEND</div>
+              <ul class="space-y-2 text-sm text-on-surface-variant">
+                <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span> <strong class="text-on-surface">FastAPI</strong> — REST & WebSocket API</li>
+                <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span> <strong class="text-on-surface">asyncio</strong> — Eşzamanlı port tarama motoru</li>
+                <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span> <strong class="text-on-surface">psutil</strong> — Ağ arayüzü & bağlantı izleme</li>
+                <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span> <strong class="text-on-surface">SQLite</strong> — Tarama geçmişi depolama</li>
+                <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span> <strong class="text-on-surface">NVD API v2</strong> — CVE zafiyet veritabanı</li>
+              </ul>
+            </div>
+
+            <div class="bg-surface-container-lowest/60 rounded-lg p-4 border border-outline-variant/20">
+              <div class="mono text-[10px] text-secondary tracking-widest mb-3">FRONTEND</div>
+              <ul class="space-y-2 text-sm text-on-surface-variant">
+                <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-secondary flex-shrink-0"></span> <strong class="text-on-surface">Tailwind CSS</strong> — Dark tema arayüz</li>
+                <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-secondary flex-shrink-0"></span> <strong class="text-on-surface">Chart.js</strong> — Gerçek zamanlı grafikler</li>
+                <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-secondary flex-shrink-0"></span> <strong class="text-on-surface">WebSocket</strong> — Canlı veri akışı</li>
+                <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-secondary flex-shrink-0"></span> <strong class="text-on-surface">JetBrains Mono</strong> — Monospace tipografi</li>
+                <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-secondary flex-shrink-0"></span> <strong class="text-on-surface">Material Symbols</strong> — İkon seti</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Özellikler -->
+        <section class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-6 relative overflow-hidden group">
+          <div class="absolute top-0 left-0 w-1 h-full bg-primary opacity-50 group-hover:opacity-100 transition-opacity"></div>
+          <div class="mono text-[10px] text-on-surface-variant mb-5 tracking-widest flex items-center gap-2">
+            <span class="material-symbols-outlined text-[14px]">rocket_launch</span>
+            [FEAT_03] PLATFORM ÖZELLİKLERİ
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div class="flex items-start gap-3 p-3 rounded-lg hover:bg-surface-variant/20 transition-colors">
+              <span class="material-symbols-outlined text-primary text-[20px] flex-shrink-0">lan</span>
+              <div>
+                <div class="text-sm font-semibold text-on-surface mb-0.5">Port Tarayıcı</div>
+                <div class="text-xs text-on-surface-variant">Asenkron TCP tarama, banner grabbing, 3 tarama profili, CSV export</div>
+              </div>
+            </div>
+            <div class="flex items-start gap-3 p-3 rounded-lg hover:bg-surface-variant/20 transition-colors">
+              <span class="material-symbols-outlined text-primary text-[20px] flex-shrink-0">radar</span>
+              <div>
+                <div class="text-sm font-semibold text-on-surface mb-0.5">Canlı İzleme</div>
+                <div class="text-xs text-on-surface-variant">Bant genişliği takibi, subnet cihaz keşfi, ağ arayüzü istatistikleri</div>
+              </div>
+            </div>
+            <div class="flex items-start gap-3 p-3 rounded-lg hover:bg-surface-variant/20 transition-colors">
+              <span class="material-symbols-outlined text-primary text-[20px] flex-shrink-0">security</span>
+              <div>
+                <div class="text-sm font-semibold text-on-surface mb-0.5">CVE Sorgulama</div>
+                <div class="text-xs text-on-surface-variant">NVD + CVE.org entegrasyonu, CVSS skoru, etkilenen ürün listesi</div>
+              </div>
+            </div>
+            <div class="flex items-start gap-3 p-3 rounded-lg hover:bg-surface-variant/20 transition-colors">
+              <span class="material-symbols-outlined text-primary text-[20px] flex-shrink-0">analytics</span>
+              <div>
+                <div class="text-sm font-semibold text-on-surface mb-0.5">Trafik Analizi</div>
+                <div class="text-xs text-on-surface-variant">Aktif bağlantı izleme, protokol dağılımı, top IP ve servis listeleri</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <!-- Sürüm Bilgisi -->
+    <div class="mt-6 mono text-[10px] text-on-surface-variant text-center tracking-widest">
+      AETHER_SCAN v1.0.0 — FastAPI + Python 3.11 — Kişisel Araştırma Projesi
+    </div>
+
+  </main>
+</div>
+</body>
+</html>

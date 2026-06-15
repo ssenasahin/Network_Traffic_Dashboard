@@ -1,0 +1,3 @@
+# Minimal requirements for scanner
+# Uses only standard library; file kept for venv pip use if needed
+# No external dependencies required

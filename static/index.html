@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html class="dark" lang="tr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AETHER_SCAN - Network Scanner</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "inverse-on-surface": "#2a3043",
+          "on-secondary": "#002e6a",
+          "surface-dim": "#0c1324",
+          "error": "#ffb4ab",
+          "surface-tint": "#4de082",
+          "secondary": "#adc6ff",
+          "on-tertiary-fixed": "#410006",
+          "on-primary-container": "#005e2d",
+          "secondary-fixed": "#d8e2ff",
+          "on-tertiary-container": "#96282d",
+          "tertiary": "#ffd7d5",
+          "on-primary-fixed-variant": "#005227",
+          "surface-container-low": "#151b2d",
+          "surface-variant": "#2e3447",
+          "background": "#0c1324",
+          "on-secondary-fixed": "#001a42",
+          "on-surface": "#dce1fb",
+          "on-tertiary-fixed-variant": "#881d24",
+          "on-primary-fixed": "#00210c",
+          "surface-container-high": "#23293c",
+          "secondary-container": "#0566d9",
+          "on-tertiary": "#670211",
+          "on-background": "#dce1fb",
+          "on-secondary-fixed-variant": "#004395",
+          "primary": "#6bfb9a",
+          "inverse-surface": "#dce1fb",
+          "surface-container": "#191f31",
+          "primary-fixed-dim": "#4de082",
+          "primary-fixed": "#6dfe9c",
+          "secondary-fixed-dim": "#adc6ff",
+          "primary-container": "#4ade80",
+          "on-error-container": "#ffdad6",
+          "on-secondary-container": "#e6ecff",
+          "surface": "#0c1324",
+          "on-error": "#690005",
+          "outline": "#869486",
+          "on-surface-variant": "#bccabb",
+          "error-container": "#93000a",
+          "tertiary-fixed": "#ffdad8",
+          "inverse-primary": "#006d36",
+          "surface-container-highest": "#2e3447",
+          "on-primary": "#003919",
+          "outline-variant": "#3d4a3e",
+          "surface-bright": "#33394c",
+          "surface-container-lowest": "#070d1f",
+          "tertiary-container": "#ffb0ad",
+          "tertiary-fixed-dim": "#ffb3b0"
+        },
+        "borderRadius": {
+          "DEFAULT": "0.125rem",
+          "lg": "0.25rem",
+          "xl": "0.5rem",
+          "full": "0.75rem"
+        },
+        "spacing": {
+          "margin-mobile": "16px",
+          "margin-desktop": "32px",
+          "unit": "4px",
+          "gutter": "16px",
+          "container-max": "1440px"
+        },
+        "fontFamily": {
+          "sans": ["Hanken Grotesk", "sans-serif"],
+          "mono": ["JetBrains Mono", "monospace"],
+          "headline-lg": ["Hanken Grotesk"],
+          "headline-xl": ["Hanken Grotesk"],
+          "code-md": ["JetBrains Mono"],
+          "body-md": ["Hanken Grotesk"],
+          "headline-lg-mobile": ["Hanken Grotesk"],
+          "code-sm": ["JetBrains Mono"],
+          "label-caps": ["JetBrains Mono"]
+        },
+        "fontSize": {
+          "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+          "headline-xl": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+          "code-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+          "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+          "headline-lg-mobile": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+          "code-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+          "label-caps": ["10px", {"lineHeight": "12px", "letterSpacing": "0.1em", "fontWeight": "700"}]
+        }
+      }
+    }
+  }
+</script>
+<style>
+  body { font-family: "Hanken Grotesk", sans-serif; }
+  .mono { font-family: "JetBrains Mono", monospace; }
+  .terminal-scroll::-webkit-scrollbar { width: 8px; }
+  .terminal-scroll::-webkit-scrollbar-track { background: rgba(12, 19, 36, 1); }
+  .terminal-scroll::-webkit-scrollbar-thumb { background: rgba(134, 148, 134, 0.3); border-radius: 4px; }
+  .terminal-scroll::-webkit-scrollbar-thumb:hover { background: rgba(107, 251, 154, 0.5); }
+  .animate-spin-slow { animation: spin 2s linear infinite; }
+  .pulse-glow { animation: pulse-shadow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+  @keyframes pulse-shadow {
+    0%, 100% { box-shadow: 0 0 10px rgba(107, 251, 154, 0.2); }
+    50% { box-shadow: 0 0 20px rgba(107, 251, 154, 0.6); }
+  }
+</style>
+</head>
+<body class="bg-background text-on-background h-screen overflow-hidden flex flex-col font-body-md text-body-md selection:bg-primary/30 selection:text-primary">
+
+<!-- TopNavBar -->
+<header class="bg-surface-dim/70 backdrop-blur-xl border-b border-outline-variant/30 shadow-[0_0_15px_rgba(77,224,130,0.1)] fixed top-0 w-full flex justify-between items-center h-16 px-margin-desktop z-50">
+  <div class="flex items-center gap-8">
+    <a href="/" class="text-2xl font-bold tracking-tighter text-primary mono uppercase">AETHER_SCAN</a>
+    <nav class="hidden md:flex gap-2 mono text-xs h-full items-center">
+      <a class="text-primary border-b-2 border-primary pb-0.5 hover:bg-primary/10 transition-all duration-200 px-3 py-2 rounded-t-lg" href="/">Port Tarayıcı</a>
+      <a class="text-on-surface-variant hover:text-on-surface hover:bg-primary/10 transition-all duration-200 px-3 py-2 rounded-lg" href="/static/monitor.html">Canlı İzleme</a>
+      <a class="text-on-surface-variant hover:text-on-surface hover:bg-primary/10 transition-all duration-200 px-3 py-2 rounded-lg" href="/static/cve.html">CVE Sorgulama</a>
+      <a class="text-on-surface-variant hover:text-on-surface hover:bg-primary/10 transition-all duration-200 px-3 py-2 rounded-lg" href="/static/traffic.html">Trafik Analizi</a>
+    </nav>
+  </div>
+  <div class="flex items-center gap-4">
+    <div class="relative hidden lg:block">
+      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+      <input class="bg-surface-container/50 border border-outline-variant/30 text-on-surface font-code-sm text-code-sm rounded-full pl-10 pr-4 py-1.5 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all w-64 placeholder:text-on-surface-variant/50" placeholder="Search..." type="text"/>
+    </div>
+    <div class="relative">
+      <button id="notif-btn" onclick="toggleNotifications()" class="relative text-on-surface-variant hover:text-primary transition-colors cursor-pointer w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10">
+        <span class="material-symbols-outlined">notifications</span>
+        <span id="notif-badge" class="hidden absolute -top-0.5 -right-0.5 bg-error text-[#000] mono text-[9px] font-bold min-w-[16px] h-4 rounded-full flex items-center justify-center px-0.5">0</span>
+      </button>
+      <div id="notif-panel" class="hidden absolute right-0 top-12 w-80 bg-surface-container border border-outline-variant/30 rounded-xl shadow-2xl z-[200] overflow-hidden mono text-xs">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-outline-variant/20">
+          <span class="text-on-surface font-bold tracking-widest text-[10px]">BİLDİRİMLER</span>
+          <button onclick="clearNotifications()" class="text-on-surface-variant hover:text-error transition-colors text-[10px] tracking-widest">TEMİZLE</button>
+        </div>
+        <div id="notif-list" class="max-h-80 overflow-y-auto"></div>
+      </div>
+    </div>
+    <button onclick="document.getElementById('settings-modal').classList.remove('hidden')" class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer active:scale-95 w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary/10">
+      <span class="material-symbols-outlined">settings</span>
+    </button>
+    <div class="w-8 h-8 rounded-full border border-primary/30 bg-surface-container-high flex items-center justify-center text-primary font-bold text-xs cursor-pointer">AS</div>
+  </div>
+</header>
+
+<!-- Main Workspace -->
+<div class="flex flex-1 mt-16 w-full h-[calc(100vh-64px)]">
+
+  <!-- SideNavBar -->
+  <aside class="bg-surface-container-lowest/80 backdrop-blur-2xl border-r border-outline-variant/20 fixed left-0 top-16 h-[calc(100vh-64px)] w-64 flex flex-col py-4 z-40 hidden md:flex mono text-xs">
+    <div class="px-6 mb-4 mt-2">
+      <div class="text-on-surface font-bold">NODE_01</div>
+      <div class="text-primary mt-1 flex items-center gap-1">
+        <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" id="node-dot"></span>
+        <span id="node-status">PORT_TARAYICI</span>
+      </div>
+    </div>
+
+    <nav class="flex-1 space-y-1">
+      <a class="bg-primary/20 text-primary border-l-4 border-primary px-4 py-3 flex items-center gap-3" href="/">
+        <span class="material-symbols-outlined text-[18px]">lan</span> Port Tarayıcı
+      </a>
+      <a class="text-on-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all duration-150" href="/static/monitor.html">
+        <span class="material-symbols-outlined text-[18px]">radar</span> Canlı İzleme
+      </a>
+      <a class="text-on-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all duration-150" href="/static/cve.html">
+        <span class="material-symbols-outlined text-[18px]">security</span> CVE Sorgulama
+      </a>
+      <a class="text-on-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all duration-150" href="/static/traffic.html">
+        <span class="material-symbols-outlined text-[18px]">analytics</span> Trafik Analizi
+      </a>
+    </nav>
+    <div class="border-t border-outline-variant/20 pt-3 mt-2 space-y-1">
+      <a class="text-on-surface-variant px-4 py-2.5 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all duration-150" href="/static/support.html">
+        <span class="material-symbols-outlined text-[18px]">help_outline</span> Destek
+      </a>
+      <a class="text-on-surface-variant px-4 py-2.5 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all duration-150" href="/static/logs.html">
+        <span class="material-symbols-outlined text-[18px]">history</span> Günlükler
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="flex-1 md:ml-64 p-margin-desktop overflow-y-auto w-full relative bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxjaXJjbGUgY3g9IjMiIGN5PSIzIiByPSIxIiBmaWxsPSIjM2Q0YTNlIiBmaWxsLW9wYWNpdHk9IjAuNSIvPjwvZz48L3N2Zz4=')]">
+
+    <!-- Page Header -->
+    <div class="flex justify-between items-end mb-8">
+      <div>
+        <h1 class="text-3xl font-bold tracking-tight text-on-surface mb-1">Port Tarayıcı</h1>
+        <p class="mono text-xs text-on-surface-variant">Belirlenen altyapı düğümlerine karşı yönlendirilmiş port taramasını başlatın.</p>
+      </div>
+      <div class="hidden lg:flex gap-4 font-code-sm text-code-sm items-center bg-surface-container-low border border-outline-variant/30 rounded-lg px-4 py-2">
+        <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-primary"></span> <span id="uptime-display">Çalışma Süresi: --:--:--</span></div>
+        <div class="w-px h-4 bg-outline-variant/50"></div>
+        <div class="flex items-center gap-2 text-secondary"><span class="material-symbols-outlined text-[14px]">speed</span> Gecikme: --</div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 xl:grid-cols-12 gap-gutter max-w-container-max">
+
+      <!-- Control Panel -->
+      <section class="xl:col-span-12 bg-surface-container-low/80 backdrop-blur-xl border border-outline-variant/30 rounded-xl p-6 shadow-lg relative overflow-hidden group">
+        <div class="absolute top-0 left-0 w-1 h-full bg-primary opacity-50 group-hover:opacity-100 transition-opacity"></div>
+        <div class="font-label-caps text-label-caps text-on-surface-variant mb-6 flex items-center gap-2">
+          <span class="material-symbols-outlined text-[14px]">tune</span> [CTRL_PNL_01] HEDEF TANIMLAMA
+        </div>
+        <form class="flex flex-col gap-4" onsubmit="event.preventDefault(); startScan();">
+          <div class="flex flex-col lg:flex-row items-end gap-6">
+            <!-- Target Input -->
+            <div class="flex-1 w-full relative">
+              <label class="block font-code-sm text-code-sm text-primary mb-2">Hedef IP / Alan Adı</label>
+              <div class="relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">dns</span>
+                <input id="target-input" class="w-full bg-surface-container-highest border-b-2 border-outline-variant text-on-surface font-code-md text-code-md px-10 py-3 focus:outline-none focus:border-primary focus:bg-surface-dim transition-all rounded-t-md" placeholder="e.g., 192.168.1.1 veya domain.com" type="text" value="scanme.nmap.org" oninput="validateTarget(this)"/>
+              </div>
+              <div id="target-error" class="hidden mt-1 flex items-center gap-1 font-code-sm text-code-sm text-error">
+                <span class="material-symbols-outlined text-[14px]">error</span>
+                <span id="target-error-msg"></span>
+              </div>
+            </div>
+            <!-- Port Mode Select -->
+            <div class="w-full lg:w-64 relative">
+              <label class="block font-code-sm text-code-sm text-secondary mb-2">Port Aralığı</label>
+              <div class="relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">filter_list</span>
+                <select id="port-select" class="w-full bg-surface-container-highest border-b-2 border-outline-variant text-on-surface font-code-md text-code-md pl-10 pr-8 py-3 appearance-none focus:outline-none focus:border-secondary focus:bg-surface-dim transition-all rounded-t-md cursor-pointer">
+                  <option value="top20">Yaygın Portlar (Top 20)</option>
+                  <option value="top100" selected>Yaygın Portlar (Top 100)</option>
+                  <option value="custom">Özel Aralık...</option>
+                </select>
+                <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px] pointer-events-none">expand_more</span>
+              </div>
+            </div>
+            <!-- Buttons -->
+            <div class="w-full lg:w-auto flex gap-4">
+              <button class="px-6 py-3 border border-outline-variant text-on-surface-variant hover:text-on-surface hover:bg-surface-variant transition-colors rounded-lg font-code-md text-code-md flex items-center gap-2" type="button" id="btn-clear">
+                <span class="material-symbols-outlined text-[18px]">clear_all</span> TEMİZLE
+              </button>
+              <button class="flex-1 lg:flex-none px-8 py-3 bg-primary text-on-primary font-code-md text-code-md font-bold rounded-lg hover:bg-primary-fixed transition-all pulse-glow flex items-center justify-center gap-2" id="btn-scan" type="submit">
+                <span class="material-symbols-outlined text-[18px]" id="icon-scan">play_arrow</span>
+                <span id="text-scan">TARAMAYI BAŞLAT</span>
+              </button>
+            </div>
+          </div>
+          <!-- Custom Ports Row (hidden unless custom selected) -->
+          <div id="custom-ports-wrap" class="hidden">
+            <label class="block font-code-sm text-code-sm text-secondary mb-2">Özel Port Listesi</label>
+            <input id="custom-ports-input" class="w-full lg:w-96 bg-surface-container-highest border-b-2 border-outline-variant text-on-surface font-code-md text-code-md px-4 py-3 focus:outline-none focus:border-secondary focus:bg-surface-dim transition-all rounded-t-md" placeholder="Örn: 22,80,443-445,8080"/>
+          </div>
+        </form>
+      </section>
+
+      <!-- Status and Progress -->
+      <section class="xl:col-span-5 flex flex-col gap-gutter">
+        <div class="bg-surface-container-low/80 backdrop-blur-xl border border-outline-variant/30 rounded-xl p-6 shadow-lg flex-1 flex flex-col justify-center">
+          <div class="font-label-caps text-label-caps text-on-surface-variant mb-6 flex justify-between items-center">
+            <span>[STAT_MON_02] YÜRÜTME METRİKLERİ</span>
+            <span class="text-secondary" id="scan-status">BOŞTA</span>
+          </div>
+          <div class="mb-4 flex justify-between items-end font-code-sm text-code-sm">
+            <div class="text-on-surface">Genel Tamamlanma</div>
+            <div class="text-primary font-bold text-lg" id="progress-text">0%</div>
+          </div>
+          <div class="w-full bg-surface-container-highest h-3 rounded-full overflow-hidden border border-outline-variant/20">
+            <div class="h-full bg-primary w-0 transition-all duration-300 ease-out" id="progress-bar"></div>
+          </div>
+          <div class="grid grid-cols-2 gap-4 mt-8 font-code-sm text-code-sm">
+            <div class="bg-surface-container/50 border border-outline-variant/20 rounded p-3">
+              <div class="text-on-surface-variant mb-1">Taranan Portlar</div>
+              <div class="text-on-surface text-lg" id="stat-scanned">0 / 0</div>
+            </div>
+            <div class="bg-surface-container/50 border border-outline-variant/20 rounded p-3">
+              <div class="text-on-surface-variant mb-1">Geçen Süre</div>
+              <div class="text-on-surface text-lg" id="stat-time">00:00:00</div>
+            </div>
+            <div class="bg-surface-container/50 border border-outline-variant/20 rounded p-3">
+              <div class="text-on-surface-variant mb-1">Açık Port</div>
+              <div class="text-primary text-lg font-bold" id="stat-open">0</div>
+            </div>
+            <div class="bg-surface-container/50 border border-outline-variant/20 rounded p-3">
+              <div class="text-on-surface-variant mb-1">Çözümlenen IP</div>
+              <div class="text-on-surface text-lg font-mono truncate" id="stat-ip">—</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Terminal Feed -->
+      <section class="xl:col-span-7 bg-black border border-outline-variant/50 rounded-xl shadow-[0_0_20px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col h-[340px]">
+        <div class="bg-surface-container-highest px-4 py-2 border-b border-outline-variant/30 flex justify-between items-center">
+          <div class="font-label-caps text-label-caps text-on-surface-variant flex items-center gap-2">
+            <span class="material-symbols-outlined text-[14px]">terminal</span> [TERM_LOG_03] CANLI_AKIS
+          </div>
+          <div class="flex gap-1.5">
+            <div class="w-2.5 h-2.5 rounded-full bg-error/80"></div>
+            <div class="w-2.5 h-2.5 rounded-full bg-secondary/80"></div>
+            <div class="w-2.5 h-2.5 rounded-full bg-primary/80"></div>
+          </div>
+        </div>
+        <div class="flex-1 p-4 font-code-sm text-code-sm text-on-surface-variant overflow-y-auto terminal-scroll break-all whitespace-pre-wrap flex flex-col gap-1" id="terminal-output">
+          <div class="text-primary">user@aether-scan:~$ _</div>
+          <div>[SYSTEM] Tarayıcı modülü başlatıldı. Talimat bekleniyor...</div>
+        </div>
+      </section>
+
+      <!-- Results Table -->
+      <section class="xl:col-span-12 bg-surface-container-low/80 backdrop-blur-xl border border-outline-variant/30 rounded-xl overflow-hidden shadow-lg mt-4">
+        <div class="px-6 py-4 border-b border-outline-variant/30 flex justify-between items-center bg-surface-container/50">
+          <div class="font-label-caps text-label-caps text-on-surface-variant flex items-center gap-2">
+            <span class="material-symbols-outlined text-[14px]">table_chart</span> [DATA_TBL_04] KEŞİF_SONUÇLARI
+            <span class="ml-2 text-primary" id="results-count"></span>
+          </div>
+          <button id="btn-export" class="text-secondary hover:text-secondary-fixed font-code-sm text-code-sm flex items-center gap-1 transition-colors">
+            <span class="material-symbols-outlined text-[16px]">download</span> DIŞA_AKTAR.CSV
+          </button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left font-code-md text-code-md">
+            <thead>
+              <tr class="border-b border-outline-variant/30 bg-surface-container-highest/30 font-label-caps text-label-caps text-on-surface-variant">
+                <th class="px-6 py-3 font-bold w-24">PORT</th>
+                <th class="px-6 py-3 font-bold">PROTOKOL</th>
+                <th class="px-6 py-3 font-bold">SERVİS</th>
+                <th class="px-6 py-3 font-bold">VERSİYON/BANNER</th>
+                <th class="px-6 py-3 font-bold text-right w-32">DURUM</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant/20 text-on-surface" id="results-table">
+              <tr>
+                <td colspan="5" class="px-6 py-8 text-center text-on-surface-variant font-code-sm text-code-sm">
+                  Tarama başlatılmayı bekliyor...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+    <div class="h-12 w-full"></div>
+  </main>
+</div>
+
+<script>
+  // ── Hedef Validasyonu ─────────────────────────────────────────────────────
+  const IPV4_RE   = /^(\d{1,3}\.){3}\d{1,3}$/;
+  const IPV6_RE   = /^[\da-fA-F:]+$/;
+  const DOMAIN_RE = /^(?=.{1,253}$)(?!-)[A-Za-z0-9-]{1,63}(?<!-)(\.(?!-)[A-Za-z0-9-]{1,63}(?<!-))*\.?$/;
+
+  function isValidIPv4(v) {
+    if (!IPV4_RE.test(v)) return false;
+    return v.split('.').every(o => parseInt(o) <= 255);
+  }
+
+  function validateTarget(input) {
+    const val      = input.value.trim();
+    const errWrap  = document.getElementById('target-error');
+    const errMsg   = document.getElementById('target-error-msg');
+
+    if (!val) {
+      showTargetError(input, errWrap, errMsg, 'Hedef boş olamaz.');
+      return false;
+    }
+
+    const valid = isValidIPv4(val) || IPV6_RE.test(val) || DOMAIN_RE.test(val);
+
+    if (!valid) {
+      showTargetError(input, errWrap, errMsg, `"${val.slice(0, 30)}" geçerli bir IP veya domain değil.`);
+      return false;
+    }
+
+    // Geçerli — hata temizle
+    input.classList.remove('border-error');
+    input.classList.add('border-outline-variant');
+    errWrap.classList.add('hidden');
+    return true;
+  }
+
+  function showTargetError(input, errWrap, errMsg, msg) {
+    input.classList.remove('border-outline-variant');
+    input.classList.add('border-error');
+    errMsg.textContent = msg;
+    errWrap.classList.remove('hidden');
+  }
+
+  // ── Bağlantı ──────────────────────────────────────────────────────────────
+  const WS_PROTO = location.protocol === 'https:' ? 'wss' : 'ws';
+  const WS_URL   = `${WS_PROTO}://${location.host}/ws/scan`;
+
+  // ── Durum ─────────────────────────────────────────────────────────────────
+  let isScanning      = false;
+  let socket          = null;
+  let timerInterval   = null;
+  let uptimeInterval  = null;
+  let scanStartTime   = 0;
+  let serverStart     = Date.now();
+  let openResults     = [];
+  let totalPorts      = 0;
+
+  // ── DOM referansları ───────────────────────────────────────────────────────
+  const scanBtn         = document.getElementById('btn-scan');
+  const clearBtn        = document.getElementById('btn-clear');
+  const exportBtn       = document.getElementById('btn-export');
+  const iconScan        = document.getElementById('icon-scan');
+  const textScan        = document.getElementById('text-scan');
+  const terminal        = document.getElementById('terminal-output');
+  const progressBar     = document.getElementById('progress-bar');
+  const progressText    = document.getElementById('progress-text');
+  const statScanned     = document.getElementById('stat-scanned');
+  const statTime        = document.getElementById('stat-time');
+  const statOpen        = document.getElementById('stat-open');
+  const statIp          = document.getElementById('stat-ip');
+  const scanStatus      = document.getElementById('scan-status');
+  const resultsTable    = document.getElementById('results-table');
+  const resultsCount    = document.getElementById('results-count');
+  const targetInput     = document.getElementById('target-input');
+  const portSelect      = document.getElementById('port-select');
+  const customWrap      = document.getElementById('custom-ports-wrap');
+  const customInput     = document.getElementById('custom-ports-input');
+  const nodeStatus      = document.getElementById('node-status');
+  const uptimeDisplay   = document.getElementById('uptime-display');
+
+  // ── Port modu değişince özel alan göster/gizle ────────────────────────────
+  portSelect.addEventListener('change', () => {
+    customWrap.classList.toggle('hidden', portSelect.value !== 'custom');
+  });
+
+  // ── Uptime sayacı ─────────────────────────────────────────────────────────
+  uptimeInterval = setInterval(() => {
+    uptimeDisplay.textContent = 'Çalışma Süresi: ' + formatDuration(Date.now() - serverStart);
+  }, 1000);
+
+  // ── Temizle butonu ────────────────────────────────────────────────────────
+  clearBtn.addEventListener('click', resetUI);
+
+  // ── CSV dışa aktar ────────────────────────────────────────────────────────
+  exportBtn.addEventListener('click', () => {
+    if (!openResults.length) { log('[UYARI] Dışa aktarılacak sonuç yok.', 'text-[#eab308]'); return; }
+    const header = 'Port,Protokol,Servis,Gecikme(ms),Banner\n';
+    const rows   = openResults.map(r =>
+      `${r.port},TCP,${r.service || ''},${r.latency_ms ?? ''},"${(r.banner || '').replace(/"/g, "'")}"`)
+      .join('\n');
+    const blob = new Blob([header + rows], { type: 'text/csv' });
+    const a    = document.createElement('a');
+    a.href     = URL.createObjectURL(blob);
+    a.download = `aether_scan_${targetInput.value.trim()}_${Date.now()}.csv`;
+    a.click();
+  });
+
+  // ── Yardımcı: süre formatla ───────────────────────────────────────────────
+  function formatDuration(ms) {
+    const s  = Math.floor(ms / 1000);
+    const h  = String(Math.floor(s / 3600)).padStart(2, '0');
+    const m  = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
+    const sc = String(s % 60).padStart(2, '0');
+    return `${h}:${m}:${sc}`;
+  }
+
+  // ── Yardımcı: terminal satırı ekle ────────────────────────────────────────
+  function log(msg, cls = '') {
+    const div = document.createElement('div');
+    if (cls) div.className = cls;
+    div.textContent = msg;
+    terminal.appendChild(div);
+    terminal.scrollTop = terminal.scrollHeight;
+  }
+
+  // ── Yardımcı: HTML kaçış ──────────────────────────────────────────────────
+  function esc(val) {
+    return String(val)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  // ── Tarama durumunu UI'ya yansıt ─────────────────────────────────────────
+  function setScanning(active) {
+    isScanning = active;
+    nodeStatus.textContent = active ? 'AKTİF_TARAMA' : 'HAZIR';
+    if (active) {
+      scanBtn.classList.remove('bg-primary', 'text-on-primary', 'pulse-glow');
+      scanBtn.classList.add('bg-surface-variant', 'text-primary', 'cursor-not-allowed', 'border', 'border-primary/50');
+      iconScan.textContent = 'autorenew';
+      iconScan.classList.add('animate-spin-slow');
+      textScan.textContent  = 'TARANIYOR...';
+      scanStatus.textContent = 'ÇALIŞIYOR';
+      scanStatus.className   = 'text-secondary animate-pulse';
+    } else {
+      scanBtn.classList.add('bg-primary', 'text-on-primary', 'pulse-glow');
+      scanBtn.classList.remove('bg-surface-variant', 'text-primary', 'cursor-not-allowed', 'border', 'border-primary/50');
+      iconScan.textContent = 'play_arrow';
+      iconScan.classList.remove('animate-spin-slow');
+      textScan.textContent = 'TARAMAYI BAŞLAT';
+      scanStatus.classList.remove('animate-pulse');
+    }
+  }
+
+  // ── Arayüzü sıfırla ───────────────────────────────────────────────────────
+  function resetUI() {
+    terminal.innerHTML = '<div class="text-primary">user@aether-scan:~$ _</div><div>[SYSTEM] Tarayıcı modülü sıfırlandı.</div>';
+    resultsTable.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-on-surface-variant font-code-sm text-code-sm">Tarama başlatılmayı bekliyor...</td></tr>';
+    progressBar.style.width = '0%';
+    progressText.textContent = '0%';
+    statScanned.textContent  = '0 / 0';
+    statTime.textContent     = '00:00:00';
+    statOpen.textContent     = '0';
+    statIp.textContent       = '—';
+    resultsCount.textContent = '';
+    openResults = [];
+    scanStatus.textContent = 'BOŞTA';
+    scanStatus.className   = 'text-secondary';
+  }
+
+  // ── Sonuç satırı ekle ─────────────────────────────────────────────────────
+  function addResultRow(r) {
+    // Placeholder'ı temizle
+    if (resultsTable.querySelector('td[colspan]')) resultsTable.innerHTML = '';
+    const tr = document.createElement('tr');
+    tr.className = 'hover:bg-primary/5 transition-colors group';
+    tr.innerHTML = `
+      <td class="px-6 py-3 text-secondary">${r.port}</td>
+      <td class="px-6 py-3 text-on-surface-variant">TCP</td>
+      <td class="px-6 py-3">${esc(r.service || '-')}</td>
+      <td class="px-6 py-3 text-on-surface-variant opacity-50 group-hover:opacity-100 transition-opacity">${esc(r.banner || '-')}</td>
+      <td class="px-6 py-3 text-right">
+        <div class="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-2 py-1 rounded">
+          <span class="w-2 h-2 rounded-full bg-primary shadow-[0_0_5px_#4ade80]"></span> AÇIK
+        </div>
+      </td>`;
+    resultsTable.appendChild(tr);
+    resultsCount.textContent = `${openResults.length} açık port`;
+  }
+
+  // ── Ana tarama fonksiyonu ─────────────────────────────────────────────────
+  function startScan() {
+    if (isScanning) return;
+    if (!validateTarget(targetInput)) return;
+
+    const target = targetInput.value.trim();
+
+    const mode        = portSelect.value;
+    const customPorts = (mode === 'custom' && customInput.value.trim()) ? customInput.value.trim() : null;
+
+    if (socket) { socket.close(); socket = null; }
+    resetUI();
+    setScanning(true);
+    openResults  = [];
+    totalPorts   = 0;
+    clearInterval(timerInterval);
+
+    log(`user@aether-scan:~$ ./scan --target ${target} --mode ${mode}`, 'text-primary');
+    log('[BİLGİ] Sunucuya bağlanılıyor...');
+
+    // Tarama süre sayacı
+    scanStartTime  = Date.now();
+    timerInterval  = setInterval(() => {
+      statTime.textContent = formatDuration(Date.now() - scanStartTime);
+    }, 500);
+
+    // WebSocket bağlantısı
+    socket = new WebSocket(WS_URL);
+
+    socket.onopen = () => {
+      log('[BİLGİ] Bağlantı kuruldu. Tarama başlatılıyor...', 'text-secondary');
+      const profile     = document.getElementById('scan-profile')?.value || 'default';
+      const custTimeout = parseFloat(document.getElementById('custom-timeout')?.value || '0.8');
+      const custConc    = parseInt(document.getElementById('custom-concurrency')?.value || '150');
+      socket.send(JSON.stringify({ target, mode, ports: customPorts, profile, timeout: custTimeout, concurrency: custConc, banner: true }));
+    };
+
+    socket.onmessage = (e) => {
+      const msg = JSON.parse(e.data);
+
+      if (msg.type === 'meta') {
+        totalPorts = msg.total;
+        statIp.textContent      = msg.resolved_ip;
+        statScanned.textContent = `0 / ${msg.total}`;
+        log(`[BİLGİ] Hedef: ${msg.target} → ${msg.resolved_ip} | ${msg.total} port taranacak`);
+      }
+
+      if (msg.type === 'progress') {
+        const pct = totalPorts ? Math.round((msg.scanned / totalPorts) * 100) : 0;
+        progressBar.style.width  = `${pct}%`;
+        progressText.textContent = `${pct}%`;
+        statScanned.textContent  = `${msg.scanned} / ${totalPorts}`;
+        const r = msg.result;
+        if (r.state === 'open') {
+          openResults.push(r);
+          statOpen.textContent = openResults.length;
+          log(`[AÇIK] ${r.port}/tcp  ${r.service}${r.banner ? '  →  ' + r.banner : ''}`, 'text-primary');
+          addResultRow(r);
+        }
+      }
+
+      if (msg.type === 'done') {
+        clearInterval(timerInterval);
+        progressBar.style.width  = '100%';
+        progressText.textContent = '100%';
+        log(`[TAMAMLANDI] ${msg.open_count} açık port · ${msg.ports_scanned} taranan · ${Math.round(msg.duration_ms)} ms`, 'text-primary mt-2');
+        setScanning(false);
+        scanStatus.textContent = 'TAMAMLANDI';
+        scanStatus.className   = 'text-primary';
+        socket = null;
+        addNotification(
+          'Tarama Tamamlandı',
+          `${targetInput.value.trim()} → ${msg.open_count} açık port / ${msg.ports_scanned} taranan`,
+          msg.open_count > 0 ? 'warn' : 'success'
+        );
+      }
+
+      if (msg.type === 'error') {
+        clearInterval(timerInterval);
+        log(`[HATA] ${msg.message}`, 'text-error');
+        setScanning(false);
+        scanStatus.textContent = 'HATA';
+        scanStatus.className   = 'text-error';
+        socket = null;
+        addNotification('Tarama Hatası', msg.message, 'error');
+      }
+    };
+
+    socket.onerror = () => {
+      clearInterval(timerInterval);
+      log('[HATA] Sunucuya bağlanılamadı. Terminalde "uvicorn app.main:app --reload" çalıştır.', 'text-error');
+      setScanning(false);
+      scanStatus.textContent = 'BAĞLANTI HATASI';
+      scanStatus.className   = 'text-error';
+    };
+
+    socket.onclose = () => {
+      if (isScanning) {
+        clearInterval(timerInterval);
+        log('[UYARI] Bağlantı beklenmedik şekilde kapandı.', 'text-[#eab308]');
+        setScanning(false);
+        scanStatus.textContent = 'DURDURULDU';
+        scanStatus.className   = 'text-[#eab308]';
+      }
+    };
+  }
+</script>
+
+<!-- ── Ayarlar Modalı ─────────────────────────────────────────────────────── -->
+<div id="settings-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center hidden" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="bg-surface-container border border-outline-variant/30 rounded-xl p-6 w-full max-w-md mx-4 shadow-[0_0_40px_rgba(0,0,0,0.8)] mono text-xs">
+
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-primary font-bold text-sm flex items-center gap-2">
+        <span class="material-symbols-outlined text-[18px]">tune</span> TARAMA MOTORU AYARLARI
+      </h2>
+      <button onclick="document.getElementById('settings-modal').classList.add('hidden')" class="text-on-surface-variant hover:text-primary transition-colors">
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+    </div>
+
+    <!-- Profil -->
+    <div class="mb-5">
+      <label class="block text-on-surface-variant tracking-widest mb-2">TARAMA PROFİLİ</label>
+      <select id="scan-profile" onchange="applyProfile(this.value)" class="w-full bg-surface-dim border border-outline-variant/40 text-on-surface rounded-lg px-3 py-2.5 focus:border-primary focus:outline-none transition-colors">
+        <option value="stealth">Gizli (Stealth)</option>
+        <option value="default" selected>Standart (Default)</option>
+        <option value="aggressive">Agresif (Aggressive)</option>
+        <option value="custom">Özel (Custom)</option>
+      </select>
+      <p id="profile-hint" class="text-on-surface-variant mt-1.5 text-[10px]">Standart tarama. IDS tetikleyebilir.</p>
+    </div>
+
+    <!-- Timeout -->
+    <div class="mb-5">
+      <label class="block text-on-surface-variant tracking-widest mb-2">ZAMAN AŞIMI (TIMEOUT — SANIYE)</label>
+      <input type="number" id="custom-timeout" step="0.1" min="0.2" max="5.0" value="0.8"
+        oninput="document.getElementById('scan-profile').value='custom'; document.getElementById('profile-hint').textContent='Özel ayarlar aktif.'"
+        class="w-full bg-surface-dim border border-outline-variant/40 text-on-surface rounded-lg px-3 py-2.5 focus:border-primary focus:outline-none transition-colors"/>
+    </div>
+
+    <!-- Concurrency -->
+    <div class="mb-6">
+      <label class="block text-on-surface-variant tracking-widest mb-2">
+        EŞZAMANLI İSTEK — <span id="concurrency-val" class="text-primary">150</span> THREAD
+      </label>
+      <input type="range" id="custom-concurrency" min="10" max="500" step="10" value="150"
+        oninput="document.getElementById('concurrency-val').textContent=this.value; document.getElementById('scan-profile').value='custom'; document.getElementById('profile-hint').textContent='Özel ayarlar aktif.'"
+        class="w-full accent-primary"/>
+      <div class="flex justify-between text-on-surface-variant text-[10px] mt-1">
+        <span>10 (Gizli)</span><span>150 (Standart)</span><span>500 (Agresif)</span>
+      </div>
+    </div>
+
+    <button onclick="saveSettings()" class="w-full bg-primary text-on-primary font-bold py-2.5 rounded-lg hover:opacity-90 transition-opacity tracking-widest">
+      AYARLARI KAYDET
+    </button>
+  </div>
+</div>
+
+<script src="/static/notifications.js"></script>
+<script>
+const PROFILES = {
+  stealth:    { timeout: 2.0, concurrency: 10,  hint: "Çok yavaş ve sessiz. IDS/IPS atlatmak için." },
+  default:    { timeout: 0.8, concurrency: 150, hint: "Standart tarama. IDS tetikleyebilir." },
+  aggressive: { timeout: 0.3, concurrency: 500, hint: "Maksimum hız. Ağda çok gürültü yapar." },
+};
+
+function applyProfile(val) {
+  const p = PROFILES[val];
+  if (!p) return;
+  document.getElementById('custom-timeout').value     = p.timeout;
+  document.getElementById('custom-concurrency').value = p.concurrency;
+  document.getElementById('concurrency-val').textContent = p.concurrency;
+  document.getElementById('profile-hint').textContent = p.hint;
+}
+
+function saveSettings() {
+  document.getElementById('settings-modal').classList.add('hidden');
+}
+</script>
+</body>
+</html>
