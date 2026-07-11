@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="dark" lang="tr">
+<html lang="tr">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
@@ -14,25 +14,24 @@
     theme: {
       extend: {
         colors: {
-          "background":               "#0c1324",
-          "surface":                  "#0c1324",
-          "surface-dim":              "#0c1324",
-          "surface-container":        "#191f31",
-          "surface-container-low":    "#151b2d",
-          "surface-container-high":   "#23293c",
-          "surface-container-highest":"#2e3447",
-          "surface-container-lowest": "#070d1f",
-          "surface-variant":          "#2e3447",
-          "on-surface":               "#dce1fb",
-          "on-surface-variant":       "#bccabb",
-          "on-background":            "#dce1fb",
-          "primary":                  "#6bfb9a",
-          "primary-fixed":            "#6dfe9c",
-          "on-primary":               "#003919",
-          "secondary":                "#adc6ff",
-          "error":                    "#ffb4ab",
-          "outline-variant":          "#3d4a3e",
-          "outline":                  "#869486",
+          "background": "#f4f6f8",
+          "surface": "#ffffff",
+          "surface-dim": "#212529",
+          "surface-container": "#ffffff",
+          "surface-container-low": "#ffffff",
+          "surface-container-high": "#e9ecef",
+          "surface-container-highest": "#dee2e6",
+          "surface-container-lowest": "#ffffff",
+          "surface-variant": "#f8f9fa",
+          "on-surface": "#212529",
+          "on-surface-variant": "#6c757d",
+          "on-background": "#212529",
+          "primary": "#0d6efd",
+          "on-primary": "#ffffff",
+          "secondary": "#198754",
+          "error": "#dc3545",
+          "outline-variant": "#dee2e6",
+          "outline": "#ced4da"
         },
         fontFamily: {
           mono: ["JetBrains Mono", "monospace"],
@@ -50,8 +49,8 @@
   .terminal-scroll::-webkit-scrollbar-thumb { background:rgba(107,251,154,.3); border-radius:4px; }
   .pulse-glow { animation: pg 2s cubic-bezier(.4,0,.6,1) infinite; }
   @keyframes pg {
-    0%,100% { box-shadow: 0 0 8px rgba(107,251,154,.2); }
-    50%      { box-shadow: 0 0 18px rgba(107,251,154,.6); }
+    0%,100% { box-shadow: 0 0 8px rgba(13, 110, 253, 0.2); }
+    50%      { box-shadow: 0 0 18px rgba(13, 110, 253, 0.6); }
   }
   .spin { animation: spin 1.5s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
@@ -59,197 +58,196 @@
 </head>
 <body class="bg-background text-on-background min-h-screen flex flex-col">
 
-<!-- TopNav -->
-<header class="bg-surface-dim/80 backdrop-blur-xl border-b border-outline-variant/30 fixed top-0 w-full flex justify-between items-center h-16 px-8 z-50">
+<!-- TopNavBar -->
+<header class="bg-surface-dim border-b border-outline-variant fixed top-0 w-full flex justify-between items-center h-16 px-8 z-50 shadow-sm">
   <div class="flex items-center gap-8">
-    <a href="/" class="text-2xl font-bold tracking-tighter text-primary mono uppercase">AETHER_SCAN</a>
-    <nav class="hidden md:flex gap-2 mono text-xs">
-      <a href="/" class="text-on-surface-variant hover:text-on-surface hover:bg-primary/10 px-3 py-2 rounded-lg transition-all">Port Tarayıcı</a>
-      <a href="/static/monitor.html" class="text-primary border-b-2 border-primary pb-0.5 px-3 py-2 rounded-t-lg">Canlı İzleme</a>
-      <a href="/static/cve.html" class="text-on-surface-variant hover:text-on-surface hover:bg-primary/10 px-3 py-2 rounded-lg transition-all">CVE Sorgulama</a>
-      <a href="/static/traffic.html" class="text-on-surface-variant hover:text-on-surface hover:bg-primary/10 px-3 py-2 rounded-lg transition-all">Trafik Analizi</a>
-    </nav>
+    <a href="/" class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary">radar</span>
+      AetherScan
+    </a>
   </div>
-  <div class="flex items-center gap-3">
-    <div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
-    <span class="mono text-xs text-on-surface-variant" id="conn-status">BAĞLANTI BEKLENİYOR</span>
-    <div class="relative ml-2">
-      <button id="notif-btn" onclick="toggleNotifications()" class="relative text-on-surface-variant hover:text-primary transition-colors w-9 h-9 flex items-center justify-center rounded-full hover:bg-primary/10">
-        <span class="material-symbols-outlined text-[20px]">notifications</span>
-        <span id="notif-badge" class="hidden absolute -top-0.5 -right-0.5 bg-error text-[#000] mono text-[9px] font-bold min-w-[16px] h-4 rounded-full flex items-center justify-center px-0.5">0</span>
+  <div class="flex items-center gap-4">
+    <div class="flex items-center gap-2 text-sm text-slate-300">
+      <div class="w-2.5 h-2.5 rounded-full bg-primary animate-pulse"></div>
+      <span id="conn-status" class="font-medium">BAĞLANTI BEKLENİYOR</span>
+    </div>
+    <div class="w-px h-5 bg-slate-600 mx-2"></div>
+    <div class="relative">
+      <button id="notif-btn" onclick="toggleNotifications()" class="text-slate-300 hover:text-white transition-colors cursor-pointer w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-700">
+        <span class="material-symbols-outlined">notifications</span>
+        <span id="notif-badge" class="hidden absolute top-1 right-1 bg-error text-white text-[10px] font-bold min-w-[16px] h-4 rounded-full flex items-center justify-center px-1">0</span>
       </button>
-      <div id="notif-panel" class="hidden absolute right-0 top-11 w-80 bg-surface-container border border-outline-variant/30 rounded-xl shadow-2xl z-[200] overflow-hidden mono text-xs">
-        <div class="flex items-center justify-between px-4 py-3 border-b border-outline-variant/20">
-          <span class="text-on-surface font-bold tracking-widest text-[10px]">BİLDİRİMLER</span>
-          <button onclick="clearNotifications()" class="text-on-surface-variant hover:text-error transition-colors text-[10px] tracking-widest">TEMİZLE</button>
+      <div id="notif-panel" class="hidden absolute right-0 top-12 w-80 bg-surface border border-outline-variant rounded-lg shadow-lg z-[200] overflow-hidden text-sm">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-outline-variant">
+          <span class="font-semibold text-on-surface">Bildirimler</span>
+          <button onclick="clearNotifications()" class="text-on-surface-variant hover:text-error transition-colors text-xs">Temizle</button>
         </div>
-        <div id="notif-list" class="max-h-80 overflow-y-auto"></div>
+        <div id="notif-list" class="max-h-80 overflow-y-auto bg-white"></div>
       </div>
     </div>
+    <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm cursor-pointer ml-2">AS</div>
   </div>
 </header>
 
 <!-- Layout -->
-<div class="flex flex-1 mt-16">
+<div class="flex flex-1 mt-16 w-full h-[calc(100vh-64px)]">
 
-  <!-- Sidebar -->
-  <aside class="hidden md:flex flex-col bg-surface-container-lowest/80 border-r border-outline-variant/20 w-64 fixed top-16 h-[calc(100vh-64px)] py-4 z-40 mono text-xs">
-    <div class="px-6 mb-4 mt-2">
-      <div class="text-on-surface font-bold">NODE_01</div>
-      <div class="text-primary mt-1 flex items-center gap-1">
-        <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span> AKTİF_İZLEME
-      </div>
+  <!-- SideNavBar -->
+  <aside class="bg-surface border-r border-outline-variant fixed left-0 top-16 h-[calc(100vh-64px)] w-64 flex flex-col py-6 z-40 hidden md:flex">
+    <div class="px-6 mb-6">
+      <div class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Menü</div>
     </div>
-    <nav class="flex-1 space-y-1">
-      <a href="/" class="text-on-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all duration-150">
-        <span class="material-symbols-outlined text-[18px]">lan</span> Port Tarayıcı
+    <nav class="flex-1 space-y-1 px-3">
+      <a class="text-on-surface hover:bg-slate-50 rounded-md px-3 py-2.5 flex items-center gap-3 font-medium transition-colors" href="/">
+        <span class="material-symbols-outlined text-[20px] text-on-surface-variant">lan</span> Port Tarayıcı
       </a>
-      <a href="/static/monitor.html" class="bg-primary/20 text-primary border-l-4 border-primary px-4 py-3 flex items-center gap-3">
-        <span class="material-symbols-outlined text-[18px]">radar</span> Canlı İzleme
+      <a class="bg-blue-50 text-primary rounded-md px-3 py-2.5 flex items-center gap-3 font-medium" href="/static/monitor.html">
+        <span class="material-symbols-outlined text-[20px]">radar</span> Canlı İzleme
       </a>
-      <a href="/static/cve.html" class="text-on-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all duration-150">
-        <span class="material-symbols-outlined text-[18px]">security</span> CVE Sorgulama
+      <a class="text-on-surface hover:bg-slate-50 rounded-md px-3 py-2.5 flex items-center gap-3 font-medium transition-colors" href="/static/cve.html">
+        <span class="material-symbols-outlined text-[20px] text-on-surface-variant">security</span> CVE Sorgulama
       </a>
-      <a href="/static/traffic.html" class="text-on-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all duration-150">
-        <span class="material-symbols-outlined text-[18px]">analytics</span> Trafik Analizi
+      <a class="text-on-surface hover:bg-slate-50 rounded-md px-3 py-2.5 flex items-center gap-3 font-medium transition-colors" href="/static/traffic.html">
+        <span class="material-symbols-outlined text-[20px] text-on-surface-variant">analytics</span> Trafik Analizi
       </a>
     </nav>
-
-    <div class="border-t border-outline-variant/20 pt-3 mt-2 space-y-1">
-      <a class="text-on-surface-variant px-4 py-2.5 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all duration-150" href="/static/support.html">
-        <span class="material-symbols-outlined text-[18px]">help_outline</span> Destek
+    <div class="mt-auto px-3 space-y-1 mb-4">
+      <div class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2 px-3">Sistem</div>
+      <a class="text-on-surface hover:bg-slate-50 rounded-md px-3 py-2 flex items-center gap-3 text-sm transition-colors" href="/static/support.html">
+        <span class="material-symbols-outlined text-[18px] text-on-surface-variant">help_outline</span> Destek
       </a>
-      <a class="text-on-surface-variant px-4 py-2.5 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all duration-150" href="/static/logs.html">
-        <span class="material-symbols-outlined text-[18px]">history</span> Günlükler
+      <a class="text-on-surface hover:bg-slate-50 rounded-md px-3 py-2 flex items-center gap-3 text-sm transition-colors" href="/static/logs.html">
+        <span class="material-symbols-outlined text-[18px] text-on-surface-variant">history</span> Günlükler
       </a>
+    </div>
+    <div class="px-6 py-4 border-t border-outline-variant bg-slate-50">
+      <div class="flex items-center gap-2 text-sm text-on-surface">
+        <span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+        <span class="font-medium">Aktif İzleme</span>
+      </div>
     </div>
   </aside>
 
-  <!-- Main -->
-  <main class="flex-1 md:ml-64 p-8 overflow-y-auto">
+  <!-- Main Content Area -->
+  <main class="flex-1 md:ml-64 p-8 overflow-y-auto w-full bg-background">
 
     <div class="mb-8">
-      <h1 class="text-3xl font-bold tracking-tight text-on-surface mb-1">Canlı İzleme</h1>
-      <p class="mono text-xs text-on-surface-variant">Gerçek zamanlı ağ trafiği ve subnet cihaz keşfi.</p>
+      <h1 class="text-2xl font-bold text-on-surface mb-2">Canlı İzleme</h1>
+      <p class="text-sm text-on-surface-variant">Gerçek zamanlı ağ trafiği ve subnet cihaz keşfi.</p>
     </div>
 
-    <div class="grid grid-cols-1 xl:grid-cols-12 gap-4 max-w-[1440px]">
+    <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 max-w-[1600px]">
 
-      <!-- ── Trafik Metrikleri (özet kartlar) ─────────────────────────────── -->
-      <div class="xl:col-span-12 grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-4">
-          <div class="mono text-[10px] text-on-surface-variant mb-1 tracking-widest">GELEN HIZ</div>
-          <div class="text-2xl font-bold text-primary mono" id="recv-rate">0 B/s</div>
-          <div class="mono text-[10px] text-on-surface-variant mt-1">Toplam: <span id="recv-total">0 B</span></div>
+      <!-- Trafik Metrikleri -->
+      <div class="xl:col-span-12 grid grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white border border-outline-variant rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Gelen Hız</div>
+          <div class="text-2xl font-bold text-primary mb-1" id="recv-rate">0 B/s</div>
+          <div class="text-sm text-slate-500">Toplam: <span id="recv-total" class="font-medium">0 B</span></div>
         </div>
-        <div class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-4">
-          <div class="mono text-[10px] text-on-surface-variant mb-1 tracking-widest">GİDEN HIZ</div>
-          <div class="text-2xl font-bold text-secondary mono" id="sent-rate">0 B/s</div>
-          <div class="mono text-[10px] text-on-surface-variant mt-1">Toplam: <span id="sent-total">0 B</span></div>
+        <div class="bg-white border border-outline-variant rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Giden Hız</div>
+          <div class="text-2xl font-bold text-secondary mb-1" id="sent-rate">0 B/s</div>
+          <div class="text-sm text-slate-500">Toplam: <span id="sent-total" class="font-medium">0 B</span></div>
         </div>
-        <div class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-4">
-          <div class="mono text-[10px] text-on-surface-variant mb-1 tracking-widest">GELEN PAKET/S</div>
-          <div class="text-2xl font-bold text-on-surface mono" id="pkt-recv">0</div>
+        <div class="bg-white border border-outline-variant rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Gelen Paket/S</div>
+          <div class="text-2xl font-bold text-slate-800" id="pkt-recv">0</div>
         </div>
-        <div class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-4">
-          <div class="mono text-[10px] text-on-surface-variant mb-1 tracking-widest">GİDEN PAKET/S</div>
-          <div class="text-2xl font-bold text-on-surface mono" id="pkt-sent">0</div>
+        <div class="bg-white border border-outline-variant rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Giden Paket/S</div>
+          <div class="text-2xl font-bold text-slate-800" id="pkt-sent">0</div>
         </div>
       </div>
 
-      <!-- ── Trafik Grafiği ─────────────────────────────────────────────────── -->
-      <div class="xl:col-span-8 bg-surface-container-low border border-outline-variant/30 rounded-xl p-5">
-        <div class="mono text-[10px] text-on-surface-variant mb-4 tracking-widest flex items-center gap-2">
-          <span class="material-symbols-outlined text-[14px]">show_chart</span>
-          [TRAFFIC_CHART] BANT GENİŞLİĞİ GEÇMİŞİ (son 60s)
+      <!-- Trafik Grafiği -->
+      <div class="xl:col-span-8 bg-white border border-outline-variant rounded-xl p-6 shadow-sm">
+        <div class="flex items-center gap-2 mb-6">
+          <span class="material-symbols-outlined text-[20px] text-slate-400">show_chart</span>
+          <h2 class="text-lg font-semibold text-on-surface">Bant Genişliği Geçmişi <span class="text-sm font-normal text-slate-500 ml-2">(son 60s)</span></h2>
         </div>
         <canvas id="traffic-chart" height="200"></canvas>
       </div>
 
-      <!-- ── Arayüz Listesi ─────────────────────────────────────────────────── -->
-      <div class="xl:col-span-4 bg-surface-container-low border border-outline-variant/30 rounded-xl p-5 flex flex-col">
-        <div class="mono text-[10px] text-on-surface-variant mb-4 tracking-widest flex items-center gap-2">
-          <span class="material-symbols-outlined text-[14px]">device_hub</span>
-          [IF_LIST] AĞ ARAYÜZLERİ
+      <!-- Arayüz Listesi -->
+      <div class="xl:col-span-4 bg-white border border-outline-variant rounded-xl p-6 shadow-sm flex flex-col">
+        <div class="flex items-center gap-2 mb-6">
+          <span class="material-symbols-outlined text-[20px] text-slate-400">device_hub</span>
+          <h2 class="text-lg font-semibold text-on-surface">Ağ Arayüzleri</h2>
         </div>
-        <div class="flex-1 space-y-2 overflow-y-auto" id="iface-list">
-          <div class="text-on-surface-variant mono text-xs">Bağlanılıyor...</div>
+        <div class="flex-1 space-y-3 overflow-y-auto pr-2" id="iface-list">
+          <div class="text-slate-500 text-sm">Bağlanılıyor...</div>
         </div>
       </div>
 
-      <!-- ── Subnet Keşfi Formu ─────────────────────────────────────────────── -->
-      <div class="xl:col-span-12 bg-surface-container-low border border-outline-variant/30 rounded-xl p-6 relative overflow-hidden group">
-        <div class="absolute top-0 left-0 w-1 h-full bg-primary opacity-50 group-hover:opacity-100 transition-opacity"></div>
-        <div class="mono text-[10px] text-on-surface-variant mb-5 tracking-widest flex items-center gap-2">
-          <span class="material-symbols-outlined text-[14px]">travel_explore</span>
-          [SWEEP_01] SUBNET CİHAZ KEŞFİ
-        </div>
-        <form class="flex flex-col lg:flex-row items-end gap-4" onsubmit="event.preventDefault(); startSweep();">
-          <div class="flex-1 w-full">
-            <label class="block mono text-xs text-primary mb-2">Subnet</label>
+      <!-- Subnet Keşfi Formu -->
+      <div class="xl:col-span-12 bg-white border border-outline-variant rounded-xl p-6 shadow-sm">
+        <h2 class="text-lg font-semibold text-on-surface mb-5">Subnet Cihaz Keşfi</h2>
+        <form class="flex flex-col lg:flex-row items-end gap-5" onsubmit="event.preventDefault(); startSweep();">
+          <div class="flex-1 w-full relative">
+            <label class="block text-sm font-medium text-on-surface mb-1.5">Subnet</label>
             <div class="relative">
-              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">router</span>
+              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">router</span>
               <input id="subnet-input" type="text" value="192.168.1.0/24"
-                class="w-full bg-surface-container-highest border-b-2 border-outline-variant text-on-surface mono text-sm pl-10 pr-4 py-3 focus:outline-none focus:border-primary focus:bg-surface-dim transition-all rounded-t-md"
+                class="w-full bg-white border border-outline-variant rounded-md text-on-surface text-sm pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                 placeholder="192.168.1.0/24"/>
             </div>
           </div>
           <div class="w-full lg:w-48">
-            <label class="block mono text-xs text-secondary mb-2">Zaman Aşımı (s)</label>
+            <label class="block text-sm font-medium text-on-surface mb-1.5">Zaman Aşımı (s)</label>
             <input id="sweep-timeout" type="number" min="0.2" max="3" step="0.1" value="0.5"
-              class="w-full bg-surface-container-highest border-b-2 border-outline-variant text-on-surface mono text-sm px-4 py-3 focus:outline-none focus:border-secondary focus:bg-surface-dim transition-all rounded-t-md"/>
+              class="w-full bg-white border border-outline-variant rounded-md text-on-surface text-sm px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"/>
           </div>
           <div class="w-full lg:w-auto flex gap-3">
             <button type="button" id="btn-sweep-clear"
-              class="px-5 py-3 border border-outline-variant text-on-surface-variant hover:bg-surface-variant mono text-sm rounded-lg transition-all flex items-center gap-2">
-              <span class="material-symbols-outlined text-[16px]">clear_all</span> TEMİZLE
+              class="px-5 py-2.5 border border-outline-variant text-on-surface-variant hover:bg-slate-50 bg-white text-sm font-medium rounded-md transition-colors flex items-center gap-2">
+              <span class="material-symbols-outlined text-[18px]">clear_all</span> Temizle
             </button>
             <button id="btn-sweep" type="submit"
-              class="px-7 py-3 bg-primary text-on-primary font-bold mono text-sm rounded-lg hover:bg-primary-fixed transition-all pulse-glow flex items-center gap-2">
-              <span class="material-symbols-outlined text-[16px]" id="icon-sweep">radar</span>
-              <span id="text-sweep">TARAMAYI BAŞLAT</span>
+              class="px-6 py-2.5 bg-primary text-white font-medium text-sm rounded-md hover:bg-blue-700 transition-colors shadow-sm flex items-center gap-2">
+              <span class="material-symbols-outlined text-[18px]" id="icon-sweep">radar</span>
+              <span id="text-sweep">Taramayı Başlat</span>
             </button>
           </div>
         </form>
 
         <!-- Sweep progress -->
-        <div class="mt-5 hidden" id="sweep-progress-wrap">
-          <div class="flex justify-between mono text-xs text-on-surface-variant mb-2">
-            <span>Tarama ilerlemesi</span>
-            <span id="sweep-pct">0%</span>
+        <div class="mt-6 hidden" id="sweep-progress-wrap">
+          <div class="flex justify-between text-sm text-slate-600 mb-2">
+            <span class="font-medium">Tarama ilerlemesi</span>
+            <span id="sweep-pct" class="font-bold text-primary">0%</span>
           </div>
-          <div class="w-full bg-surface-container-highest h-2 rounded-full overflow-hidden">
-            <div class="h-full bg-primary transition-all duration-300" id="sweep-bar" style="width:0%"></div>
+          <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden mb-2">
+            <div class="h-full bg-primary transition-all duration-300 rounded-full" id="sweep-bar" style="width:0%"></div>
           </div>
-          <div class="mono text-xs text-on-surface-variant mt-1" id="sweep-stat">0 / 0 taranan — 0 cihaz bulundu</div>
+          <div class="text-xs text-slate-500" id="sweep-stat">0 / 0 taranan — 0 cihaz bulundu</div>
         </div>
       </div>
 
-      <!-- ── Cihaz Tablosu ─────────────────────────────────────────────────── -->
-      <div class="xl:col-span-12 bg-surface-container-low border border-outline-variant/30 rounded-xl overflow-hidden">
-        <div class="px-6 py-4 border-b border-outline-variant/30 flex justify-between items-center bg-surface-container/50">
-          <div class="mono text-[10px] text-on-surface-variant tracking-widest flex items-center gap-2">
-            <span class="material-symbols-outlined text-[14px]">table_chart</span>
-            [HOST_TBL] KEŞFEDİLEN CİHAZLAR
-            <span class="text-primary ml-2" id="host-count"></span>
-          </div>
-          <button id="btn-export-hosts" class="text-secondary hover:text-secondary mono text-xs flex items-center gap-1 transition-colors">
-            <span class="material-symbols-outlined text-[14px]">download</span> CSV
+      <!-- Cihaz Tablosu -->
+      <div class="xl:col-span-12 bg-white border border-outline-variant rounded-xl shadow-sm mt-2">
+        <div class="px-6 py-5 border-b border-outline-variant flex justify-between items-center">
+          <h2 class="text-lg font-semibold text-on-surface flex items-center gap-2">
+            Keşfedilen Cihazlar
+            <span class="text-primary text-sm font-normal ml-2" id="host-count"></span>
+          </h2>
+          <button id="btn-export-hosts" class="text-primary hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-md text-sm font-medium flex items-center gap-1.5 transition-colors">
+            <span class="material-symbols-outlined text-[16px]">download</span> CSV Aktar
           </button>
         </div>
         <div class="overflow-x-auto">
-          <table class="w-full text-left mono text-sm">
+          <table class="w-full text-left text-sm">
             <thead>
-              <tr class="border-b border-outline-variant/30 bg-surface-container-highest/30 text-[10px] text-on-surface-variant tracking-widest">
+              <tr class="bg-slate-50 text-slate-500 font-semibold border-b border-outline-variant">
                 <th class="px-6 py-3">IP ADRESİ</th>
                 <th class="px-6 py-3">HOSTNAME</th>
                 <th class="px-6 py-3">TESPİT PORTU</th>
                 <th class="px-6 py-3 text-right">DURUM</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-outline-variant/20 text-on-surface" id="host-table">
+            <tbody class="divide-y divide-outline-variant text-slate-700" id="host-table">
               <tr>
-                <td colspan="4" class="px-6 py-8 text-center text-on-surface-variant text-xs">
+                <td colspan="4" class="px-6 py-12 text-center text-slate-400">
                   Subnet taraması başlatılmayı bekliyor...
                 </td>
               </tr>
@@ -340,13 +338,13 @@ const trafficChart = new Chart(document.getElementById('traffic-chart'), {
     animation: false,
     responsive: true,
     maintainAspectRatio: true,
-    plugins: { legend: { labels: { color: '#bccabb', font: { family: 'JetBrains Mono', size: 11 } } } },
+    plugins: { legend: { labels: { color: '#64748b', font: { family: 'Hanken Grotesk', size: 12 } } } },
     scales: {
-      x: { ticks: { display: false }, grid: { color: 'rgba(61,74,62,0.4)' } },
+      x: { ticks: { display: false }, grid: { color: 'rgba(203,213,225,0.4)' } },
       y: {
-        ticks: { color: '#bccabb', font: { family: 'JetBrains Mono', size: 10 },
+        ticks: { color: '#64748b', font: { family: 'Hanken Grotesk', size: 11 },
                  callback: v => fmtBytes(v) },
-        grid: { color: 'rgba(61,74,62,0.4)' }
+        grid: { color: 'rgba(203,213,225,0.4)' }
       }
     }
   }
@@ -384,15 +382,15 @@ function connectTraffic() {
     // Arayüz listesi
     if (d.interfaces && d.interfaces.length) {
       ifaceList.innerHTML = d.interfaces.map(i => `
-        <div class="bg-surface-container border border-outline-variant/20 rounded p-3">
+        <div class="bg-slate-50 border border-slate-200 rounded-lg p-3">
           <div class="flex justify-between items-center mb-1">
-            <span class="text-on-surface font-bold text-xs">${esc(i.interface)}</span>
-            ${i.ipv4 ? `<span class="text-primary text-[10px]">${esc(i.ipv4)}</span>` : ''}
+            <span class="text-on-surface font-semibold text-sm">${esc(i.interface)}</span>
+            ${i.ipv4 ? `<span class="text-primary text-xs bg-blue-50 px-2 py-0.5 rounded">${esc(i.ipv4)}</span>` : ''}
           </div>
-          <div class="text-on-surface-variant text-[10px] flex gap-3">
+          <div class="text-slate-500 text-xs flex gap-3 mt-2">
             <span>↓ ${fmtBytes(i.bytes_recv)}</span>
             <span>↑ ${fmtBytes(i.bytes_sent)}</span>
-            <span class="${i.errors_in + i.errors_out > 0 ? 'text-error' : ''}">Hata: ${i.errors_in + i.errors_out}</span>
+            <span class="${i.errors_in + i.errors_out > 0 ? 'text-error font-medium' : ''}">Hata: ${i.errors_in + i.errors_out}</span>
           </div>
         </div>`).join('');
     }
@@ -411,7 +409,7 @@ let isSweeping = false;
 let foundHosts = [];
 
 document.getElementById('btn-sweep-clear').addEventListener('click', () => {
-  hostTable.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-on-surface-variant text-xs">Subnet taraması başlatılmayı bekliyor...</td></tr>';
+  hostTable.innerHTML = '<tr><td colspan="4" class="px-6 py-12 text-center text-slate-400 text-sm">Subnet taraması başlatılmayı bekliyor...</td></tr>';
   hostCount.textContent = '';
   sweepWrap.classList.add('hidden');
   sweepBar.style.width = '0%';
@@ -433,12 +431,12 @@ function addHostRow(h) {
   const tr = document.createElement('tr');
   tr.className = 'hover:bg-primary/5 transition-colors';
   tr.innerHTML = `
-    <td class="px-6 py-3 text-secondary">${esc(h.ip)}</td>
-    <td class="px-6 py-3 text-on-surface-variant">${h.hostname ? esc(h.hostname) : '<span class="opacity-40">—</span>'}</td>
-    <td class="px-6 py-3">${h.open_port}/tcp</td>
+    <td class="px-6 py-3 font-semibold text-slate-800">${esc(h.ip)}</td>
+    <td class="px-6 py-3 text-slate-600">${h.hostname ? esc(h.hostname) : '<span class="text-slate-300">—</span>'}</td>
+    <td class="px-6 py-3 text-slate-600">${h.open_port}/tcp</td>
     <td class="px-6 py-3 text-right">
-      <div class="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-2 py-1 rounded text-xs">
-        <span class="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_4px_#4ade80]"></span> AKTİF
+      <div class="inline-flex items-center justify-center gap-1.5 bg-green-50 text-green-700 border border-green-200 px-2 py-1 rounded-md text-xs font-semibold">
+        <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Aktif
       </div>
     </td>`;
   hostTable.appendChild(tr);
@@ -455,11 +453,11 @@ function startSweep() {
   sweepPct.textContent = '0%';
   sweepStat.textContent = '0 / 0 taranan — 0 cihaz bulundu';
 
-  btnSweep.classList.remove('bg-primary','text-on-primary','pulse-glow');
-  btnSweep.classList.add('bg-surface-variant','text-primary','cursor-not-allowed','border','border-primary/50');
+  btnSweep.classList.remove('bg-primary','hover:bg-blue-700','text-white');
+  btnSweep.classList.add('bg-slate-100','text-primary','cursor-not-allowed','border','border-slate-300');
   iconSweep.textContent = 'hourglass_top';
   iconSweep.classList.add('spin');
-  textSweep.textContent = 'TARANIYOR...';
+  textSweep.textContent = 'Taranıyor...';
 
   if (sweepWs) sweepWs.close();
   sweepWs = new WebSocket(`${WS_PROTO}://${HOST}/ws/network/sweep`);
@@ -513,13 +511,13 @@ function startSweep() {
 
 function finishSweep() {
   isSweeping = false;
-  btnSweep.classList.add('bg-primary','text-on-primary','pulse-glow');
-  btnSweep.classList.remove('bg-surface-variant','text-primary','cursor-not-allowed','border','border-primary/50');
+  btnSweep.classList.add('bg-primary','hover:bg-blue-700','text-white');
+  btnSweep.classList.remove('bg-slate-100','text-primary','cursor-not-allowed','border','border-slate-300');
   iconSweep.textContent = 'radar';
   iconSweep.classList.remove('spin');
-  textSweep.textContent = 'TARAMAYI BAŞLAT';
+  textSweep.textContent = 'Taramayı Başlat';
   if (!foundHosts.length && !hostTable.querySelector('td[colspan]')) {
-    hostTable.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-on-surface-variant text-xs">Aktif cihaz bulunamadı.</td></tr>';
+    hostTable.innerHTML = '<tr><td colspan="4" class="px-6 py-12 text-center text-slate-400 text-sm">Aktif cihaz bulunamadı.</td></tr>';
   }
   sweepWs = null;
 }

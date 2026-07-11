@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="dark" lang="tr">
+<html lang="tr">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
@@ -13,23 +13,24 @@
     theme: {
       extend: {
         colors: {
-          "background":               "#0c1324",
-          "surface-dim":              "#0c1324",
-          "surface-container":        "#191f31",
-          "surface-container-low":    "#151b2d",
-          "surface-container-high":   "#23293c",
-          "surface-container-highest":"#2e3447",
-          "surface-container-lowest": "#070d1f",
-          "surface-variant":          "#2e3447",
-          "on-surface":               "#dce1fb",
-          "on-surface-variant":       "#bccabb",
-          "on-background":            "#dce1fb",
-          "primary":                  "#6bfb9a",
-          "on-primary":               "#003919",
-          "secondary":                "#adc6ff",
-          "error":                    "#ffb4ab",
-          "outline-variant":          "#3d4a3e",
-          "outline":                  "#869486",
+          "background": "#f4f6f8",
+          "surface": "#ffffff",
+          "surface-dim": "#212529",
+          "surface-container": "#ffffff",
+          "surface-container-low": "#ffffff",
+          "surface-container-high": "#e9ecef",
+          "surface-container-highest": "#dee2e6",
+          "surface-container-lowest": "#ffffff",
+          "surface-variant": "#f8f9fa",
+          "on-surface": "#212529",
+          "on-surface-variant": "#6c757d",
+          "on-background": "#212529",
+          "primary": "#0d6efd",
+          "on-primary": "#ffffff",
+          "secondary": "#198754",
+          "error": "#dc3545",
+          "outline-variant": "#dee2e6",
+          "outline": "#ced4da"
         },
         fontFamily: {
           mono: ["JetBrains Mono", "monospace"],
@@ -53,107 +54,105 @@
 </head>
 <body class="bg-background text-on-background min-h-screen flex flex-col">
 
-<!-- TopNav -->
-<header class="bg-surface-dim/80 backdrop-blur-xl border-b border-outline-variant/30 fixed top-0 w-full flex justify-between items-center h-16 px-8 z-50">
+<!-- TopNavBar -->
+<header class="bg-surface-dim border-b border-outline-variant fixed top-0 w-full flex justify-between items-center h-16 px-8 z-50 shadow-sm">
   <div class="flex items-center gap-8">
-    <a href="/" class="text-2xl font-bold tracking-tighter text-primary mono uppercase">AETHER_SCAN</a>
-    <nav class="hidden md:flex gap-2 mono text-xs">
-      <a href="/" class="text-on-surface-variant hover:text-on-surface hover:bg-primary/10 px-3 py-2 rounded-lg transition-all">Port Tarayıcı</a>
-      <a href="/static/monitor.html" class="text-on-surface-variant hover:text-on-surface hover:bg-primary/10 px-3 py-2 rounded-lg transition-all">Canlı İzleme</a>
-      <a href="/static/cve.html" class="text-primary border-b-2 border-primary pb-0.5 px-3 py-2 rounded-t-lg">CVE Sorgulama</a>
-      <a href="/static/traffic.html" class="text-on-surface-variant hover:text-on-surface hover:bg-primary/10 px-3 py-2 rounded-lg transition-all">Trafik Analizi</a>
-    </nav>
+    <a href="/" class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary">radar</span>
+      AetherScan
+    </a>
   </div>
-  <div class="relative">
-    <button id="notif-btn" onclick="toggleNotifications()" class="relative text-on-surface-variant hover:text-primary transition-colors w-9 h-9 flex items-center justify-center rounded-full hover:bg-primary/10">
-      <span class="material-symbols-outlined text-[20px]">notifications</span>
-      <span id="notif-badge" class="hidden absolute -top-0.5 -right-0.5 bg-error text-[#000] mono text-[9px] font-bold min-w-[16px] h-4 rounded-full flex items-center justify-center px-0.5">0</span>
-    </button>
-    <div id="notif-panel" class="hidden absolute right-0 top-11 w-80 bg-surface-container border border-outline-variant/30 rounded-xl shadow-2xl z-[200] overflow-hidden mono text-xs">
-      <div class="flex items-center justify-between px-4 py-3 border-b border-outline-variant/20">
-        <span class="text-on-surface font-bold tracking-widest text-[10px]">BİLDİRİMLER</span>
-        <button onclick="clearNotifications()" class="text-on-surface-variant hover:text-error transition-colors text-[10px] tracking-widest">TEMİZLE</button>
+  <div class="flex items-center gap-4">
+    <div class="relative ml-2">
+      <button id="notif-btn" onclick="toggleNotifications()" class="text-slate-300 hover:text-white transition-colors cursor-pointer w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-700">
+        <span class="material-symbols-outlined">notifications</span>
+        <span id="notif-badge" class="hidden absolute top-1 right-1 bg-error text-white text-[10px] font-bold min-w-[16px] h-4 rounded-full flex items-center justify-center px-1">0</span>
+      </button>
+      <div id="notif-panel" class="hidden absolute right-0 top-12 w-80 bg-surface border border-outline-variant rounded-lg shadow-lg z-[200] overflow-hidden text-sm">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-outline-variant">
+          <span class="font-semibold text-on-surface">Bildirimler</span>
+          <button onclick="clearNotifications()" class="text-on-surface-variant hover:text-error transition-colors text-xs">Temizle</button>
+        </div>
+        <div id="notif-list" class="max-h-80 overflow-y-auto bg-white"></div>
       </div>
-      <div id="notif-list" class="max-h-80 overflow-y-auto"></div>
     </div>
+    <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm cursor-pointer ml-2">AS</div>
   </div>
 </header>
 
-<!-- Layout -->
-<div class="flex flex-1 mt-16">
+<div class="flex flex-1 mt-16 w-full h-[calc(100vh-64px)]">
 
-  <!-- Sidebar -->
-  <aside class="hidden md:flex flex-col bg-surface-container-lowest/80 border-r border-outline-variant/20 w-64 fixed top-16 h-[calc(100vh-64px)] py-4 z-40 mono text-xs">
-    <div class="px-6 mb-4 mt-2">
-      <div class="text-on-surface font-bold">NODE_01</div>
-      <div class="text-primary mt-1 flex items-center gap-1">
-        <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span> CVE_SORGU
-      </div>
+  <!-- SideNavBar -->
+  <aside class="bg-surface border-r border-outline-variant fixed left-0 top-16 h-[calc(100vh-64px)] w-64 flex flex-col py-6 z-40 hidden md:flex">
+    <div class="px-6 mb-6">
+      <div class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Menü</div>
     </div>
-
-    <nav class="flex-1 space-y-1">
-      <a href="/" class="text-on-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all">
-        <span class="material-symbols-outlined text-[18px]">lan</span> Port Tarayıcı
+    <nav class="flex-1 space-y-1 px-3">
+      <a class="text-on-surface hover:bg-slate-50 rounded-md px-3 py-2.5 flex items-center gap-3 font-medium transition-colors" href="/">
+        <span class="material-symbols-outlined text-[20px] text-on-surface-variant">lan</span> Port Tarayıcı
       </a>
-      <a href="/static/monitor.html" class="text-on-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all">
-        <span class="material-symbols-outlined text-[18px]">radar</span> Canlı İzleme
+      <a class="text-on-surface hover:bg-slate-50 rounded-md px-3 py-2.5 flex items-center gap-3 font-medium transition-colors" href="/static/monitor.html">
+        <span class="material-symbols-outlined text-[20px] text-on-surface-variant">radar</span> Canlı İzleme
       </a>
-      <a href="/static/cve.html" class="bg-primary/20 text-primary border-l-4 border-primary px-4 py-3 flex items-center gap-3">
-        <span class="material-symbols-outlined text-[18px]">security</span> CVE Sorgulama
+      <a class="bg-blue-50 text-primary rounded-md px-3 py-2.5 flex items-center gap-3 font-medium" href="/static/cve.html">
+        <span class="material-symbols-outlined text-[20px]">security</span> CVE Sorgulama
       </a>
-      <a href="/static/traffic.html" class="text-on-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all">
-        <span class="material-symbols-outlined text-[18px]">analytics</span> Trafik Analizi
+      <a class="text-on-surface hover:bg-slate-50 rounded-md px-3 py-2.5 flex items-center gap-3 font-medium transition-colors" href="/static/traffic.html">
+        <span class="material-symbols-outlined text-[20px] text-on-surface-variant">analytics</span> Trafik Analizi
       </a>
     </nav>
-    <div class="border-t border-outline-variant/20 pt-3 mt-2 space-y-1">
-      <a href="/static/support.html" class="text-on-surface-variant px-4 py-2.5 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all duration-150">
-        <span class="material-symbols-outlined text-[18px]">help_outline</span> Destek
+    <div class="mt-auto px-3 space-y-1 mb-4">
+      <div class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2 px-3">Sistem</div>
+      <a class="text-on-surface hover:bg-slate-50 rounded-md px-3 py-2 flex items-center gap-3 text-sm transition-colors" href="/static/support.html">
+        <span class="material-symbols-outlined text-[18px] text-on-surface-variant">help_outline</span> Destek
       </a>
-      <a href="/static/logs.html" class="text-on-surface-variant px-4 py-2.5 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all duration-150">
-        <span class="material-symbols-outlined text-[18px]">history</span> Günlükler
+      <a class="text-on-surface hover:bg-slate-50 rounded-md px-3 py-2 flex items-center gap-3 text-sm transition-colors" href="/static/logs.html">
+        <span class="material-symbols-outlined text-[18px] text-on-surface-variant">history</span> Günlükler
       </a>
+    </div>
+    <div class="px-6 py-4 border-t border-outline-variant bg-slate-50">
+      <div class="flex items-center gap-2 text-sm text-on-surface">
+        <span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+        <span class="font-medium">CVE Sorgu</span>
+      </div>
     </div>
   </aside>
 
   <!-- Main -->
-  <main class="flex-1 md:ml-64 p-8 overflow-y-auto">
+  <main class="flex-1 md:ml-64 p-8 overflow-y-auto w-full bg-background">
 
     <div class="mb-8">
-      <h1 class="text-3xl font-bold tracking-tight text-on-surface mb-1">CVE Sorgulama</h1>
-      <p class="mono text-xs text-on-surface-variant">NVD (NIST) ve CVE.org veritabanlarında zafiyet arama.</p>
+      <h1 class="text-2xl font-bold text-on-surface mb-2">CVE Sorgulama</h1>
+      <p class="text-sm text-on-surface-variant">NVD (NIST) ve CVE.org veritabanlarında zafiyet arama.</p>
     </div>
 
     <!-- Arama Paneli -->
-    <section class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-6 mb-6 relative overflow-hidden group">
-      <div class="absolute top-0 left-0 w-1 h-full bg-primary opacity-50 group-hover:opacity-100 transition-opacity"></div>
-      <div class="mono text-[10px] text-on-surface-variant mb-5 tracking-widest flex items-center gap-2">
-        <span class="material-symbols-outlined text-[14px]">manage_search</span>
-        [QUERY_01] ZAFİYET SORGULAMA
-      </div>
+    <section class="bg-white border border-outline-variant rounded-xl p-6 mb-6 shadow-sm">
+      <h2 class="text-lg font-semibold text-on-surface mb-5">Zafiyet Sorgulama</h2>
 
       <form onsubmit="event.preventDefault(); runSearch();" class="flex flex-col gap-4">
-        <div class="flex flex-col lg:flex-row gap-4 items-end">
+        <div class="flex flex-col lg:flex-row gap-5 items-end">
           <!-- Arama kutusu -->
-          <div class="flex-1 w-full">
-            <label class="block mono text-xs text-primary mb-2">CVE-ID veya Ürün Adı</label>
+          <div class="flex-1 w-full relative">
+            <label class="block text-sm font-medium text-on-surface mb-1.5">CVE-ID veya Ürün Adı</label>
             <div class="relative">
-              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">shield_question</span>
+              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">shield_question</span>
               <input id="query-input" type="text"
                 placeholder="CVE-2024-1234  veya  nginx  veya  openssl 3.0"
-                class="w-full bg-surface-container-highest border-b-2 border-outline-variant text-on-surface mono text-sm pl-10 pr-4 py-3 focus:outline-none focus:border-primary focus:bg-surface-dim transition-all rounded-t-md"
+                class="w-full bg-white border border-outline-variant rounded-md text-on-surface text-sm pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                 oninput="detectMode(this.value)"/>
             </div>
             <!-- Mod göstergesi -->
-            <div class="mt-1 mono text-[10px] text-on-surface-variant" id="mode-hint">
+            <div class="mt-1.5 text-xs text-slate-500 font-medium" id="mode-hint">
               CVE-ID veya ürün/keyword gir
             </div>
           </div>
 
           <!-- Limit (keyword modunda) -->
           <div class="w-full lg:w-36" id="limit-wrap">
-            <label class="block mono text-xs text-secondary mb-2">Sonuç Limiti</label>
+            <label class="block text-sm font-medium text-on-surface mb-1.5">Sonuç Limiti</label>
             <select id="limit-select"
-              class="w-full bg-surface-container-highest border-b-2 border-outline-variant text-on-surface mono text-sm px-3 py-3 focus:outline-none focus:border-secondary focus:bg-surface-dim transition-all rounded-t-md appearance-none cursor-pointer">
+              class="w-full bg-white border border-outline-variant rounded-md text-on-surface text-sm px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none cursor-pointer">
               <option value="10">10</option>
               <option value="20" selected>20</option>
               <option value="50">50</option>
@@ -163,27 +162,27 @@
           <!-- Butonlar -->
           <div class="flex gap-3 w-full lg:w-auto">
             <button type="button" onclick="clearResults()"
-              class="px-5 py-3 border border-outline-variant text-on-surface-variant hover:bg-surface-variant mono text-sm rounded-lg transition-all flex items-center gap-2">
-              <span class="material-symbols-outlined text-[16px]">clear_all</span> TEMİZLE
+              class="px-5 py-2.5 border border-outline-variant text-on-surface-variant hover:bg-slate-50 bg-white text-sm font-medium rounded-md transition-colors flex items-center gap-2">
+              <span class="material-symbols-outlined text-[18px]">clear_all</span> Temizle
             </button>
             <button id="btn-search" type="submit"
-              class="px-7 py-3 bg-primary text-on-primary font-bold mono text-sm rounded-lg hover:bg-primary-fixed transition-all pulse-glow flex items-center gap-2">
-              <span class="material-symbols-outlined text-[16px]" id="icon-search">search</span>
-              <span id="text-search">SORGULA</span>
+              class="px-6 py-2.5 bg-primary text-white font-medium text-sm rounded-md hover:bg-blue-700 transition-colors shadow-sm flex items-center gap-2">
+              <span class="material-symbols-outlined text-[18px]" id="icon-search">search</span>
+              <span id="text-search">Sorgula</span>
             </button>
           </div>
         </div>
       </form>
 
       <!-- Hata mesajı -->
-      <div id="search-error" class="hidden mt-3 flex items-center gap-2 mono text-xs text-error">
-        <span class="material-symbols-outlined text-[14px]">error</span>
+      <div id="search-error" class="hidden mt-4 flex items-center gap-2 text-sm text-error bg-red-50 p-3 rounded-md border border-red-100">
+        <span class="material-symbols-outlined text-[18px]">error</span>
         <span id="error-msg"></span>
       </div>
     </section>
 
     <!-- Sonuç özeti -->
-    <div class="mb-4 mono text-xs text-on-surface-variant flex items-center gap-2" id="result-summary"></div>
+    <div class="mb-4 text-sm font-medium text-slate-600 flex items-center gap-2" id="result-summary"></div>
 
     <!-- Sonuçlar -->
     <div id="results-container" class="space-y-4"></div>
@@ -203,20 +202,20 @@ function esc(v) {
 
 function severityClass(s) {
   return {
-    CRITICAL: 'bg-red-900/40 border-red-500/40 text-red-300',
-    HIGH:     'bg-orange-900/40 border-orange-500/40 text-orange-300',
-    MEDIUM:   'bg-yellow-900/40 border-yellow-500/40 text-yellow-300',
-    LOW:      'bg-blue-900/40 border-blue-500/40 text-blue-300',
-    NONE:     'bg-surface-variant border-outline-variant text-on-surface-variant',
-  }[s] || 'bg-surface-variant border-outline-variant text-on-surface-variant';
+    CRITICAL: 'bg-red-50 border-red-200 text-red-700',
+    HIGH:     'bg-orange-50 border-orange-200 text-orange-700',
+    MEDIUM:   'bg-yellow-50 border-yellow-200 text-yellow-700',
+    LOW:      'bg-blue-50 border-blue-200 text-blue-700',
+    NONE:     'bg-slate-50 border-slate-200 text-slate-700',
+  }[s] || 'bg-slate-50 border-slate-200 text-slate-700';
 }
 
 function scoreColor(score) {
-  if (!score) return 'text-on-surface-variant';
-  if (score >= 9)   return 'text-red-300';
-  if (score >= 7)   return 'text-orange-300';
-  if (score >= 4)   return 'text-yellow-300';
-  return 'text-blue-300';
+  if (!score) return 'text-slate-500';
+  if (score >= 9)   return 'text-red-600';
+  if (score >= 7)   return 'text-orange-600';
+  if (score >= 4)   return 'text-yellow-600';
+  return 'text-blue-600';
 }
 
 function fmtDate(iso) {
@@ -232,14 +231,14 @@ function detectMode(val) {
   val = val.trim();
   if (!val) {
     modeHint.textContent = 'CVE-ID veya ürün/keyword gir';
-    modeHint.className = 'mt-1 mono text-[10px] text-on-surface-variant';
+    modeHint.className = 'mt-1.5 text-xs text-slate-500 font-medium';
     return;
   }
   if (CVE_ID_RE.test(val)) {
-    modeHint.innerHTML = '<span class="text-primary">✦ CVE-ID modu</span> — tekil zafiyet detayı';
+    modeHint.innerHTML = '<span class="text-primary font-semibold">✦ CVE-ID modu</span> — tekil zafiyet detayı';
     limitWrap.classList.add('hidden');
   } else {
-    modeHint.innerHTML = '<span class="text-secondary">✦ Keyword modu</span> — ürün/servis araması';
+    modeHint.innerHTML = '<span class="text-secondary font-semibold">✦ Keyword modu</span> — ürün/servis araması';
     limitWrap.classList.remove('hidden');
   }
 }
@@ -256,13 +255,13 @@ const resultsContainer = document.getElementById('results-container');
 function setLoading(on) {
   btnSearch.disabled = on;
   if (on) {
-    iconSearch.className = 'material-symbols-outlined text-[16px] spin';
-    textSearch.textContent = 'SORGULANIYOR...';
+    iconSearch.className = 'material-symbols-outlined text-[18px] spin';
+    textSearch.textContent = 'Sorgulanıyor...';
     btnSearch.classList.remove('pulse-glow');
   } else {
-    iconSearch.className = 'material-symbols-outlined text-[16px]';
+    iconSearch.className = 'material-symbols-outlined text-[18px]';
     iconSearch.textContent = 'search';
-    textSearch.textContent = 'SORGULA';
+    textSearch.textContent = 'Sorgula';
     btnSearch.classList.add('pulse-glow');
   }
 }
@@ -282,7 +281,7 @@ function clearResults() {
   hideError();
   document.getElementById('query-input').value = '';
   modeHint.textContent = 'CVE-ID veya ürün/keyword gir';
-  modeHint.className = 'mt-1 mono text-[10px] text-on-surface-variant';
+  modeHint.className = 'mt-1.5 text-xs text-slate-500 font-medium';
   limitWrap.classList.remove('hidden');
 }
 
@@ -293,68 +292,68 @@ function buildCard(cve) {
   const score    = cve.cvss_score != null ? cve.cvss_score.toFixed(1) : '—';
 
   const affected = cve.affected?.length
-    ? cve.affected.slice(0, 6).map(a => `<span class="bg-surface-container border border-outline-variant/30 text-on-surface-variant px-2 py-0.5 rounded text-[10px]">${esc(a)}</span>`).join('')
+    ? cve.affected.slice(0, 6).map(a => `<span class="bg-slate-100 border border-slate-200 text-slate-600 px-2 py-1 rounded-md text-xs font-medium">${esc(a)}</span>`).join('')
     : '';
 
   const refs = cve.references?.length
     ? cve.references.slice(0, 4).map(r =>
-        `<a href="${esc(r.url)}" target="_blank" rel="noopener" class="flex items-center gap-1 text-secondary hover:text-primary transition-colors truncate max-w-xs">
-          <span class="material-symbols-outlined text-[12px]">open_in_new</span>${esc(r.url)}
+        `<a href="${esc(r.url)}" target="_blank" rel="noopener" class="flex items-center gap-1.5 text-blue-600 hover:text-blue-800 transition-colors truncate max-w-xs font-medium">
+          <span class="material-symbols-outlined text-[14px]">open_in_new</span>${esc(r.url)}
         </a>`).join('')
-    : '<span class="text-on-surface-variant">Referans yok</span>';
+    : '<span class="text-slate-500 italic">Referans yok</span>';
 
   const div = document.createElement('div');
-  div.className = 'bg-surface-container-low border border-outline-variant/30 rounded-xl overflow-hidden';
+  div.className = 'bg-white border border-outline-variant rounded-xl shadow-sm overflow-hidden';
   div.innerHTML = `
     <!-- Kart başlığı -->
-    <div class="px-6 py-4 border-b border-outline-variant/30 bg-surface-container/60 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <div class="px-6 py-4 border-b border-outline-variant bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
       <div class="flex items-center gap-3 flex-wrap">
-        <span class="mono font-bold text-primary text-sm">${esc(cve.id)}</span>
-        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded border mono text-[10px] font-bold ${sevCls}">
+        <span class="font-bold text-slate-800 text-lg">${esc(cve.id)}</span>
+        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md border text-xs font-bold ${sevCls}">
           ${esc(cve.cvss_severity)}
         </span>
         ${cve.source === 'CVE.org'
-          ? '<span class="mono text-[9px] bg-secondary/10 border border-secondary/20 text-secondary px-2 py-0.5 rounded">CVE.org</span>'
-          : '<span class="mono text-[9px] bg-primary/10 border border-primary/20 text-primary px-2 py-0.5 rounded">NVD</span>'}
+          ? '<span class="text-xs bg-purple-50 border border-purple-200 text-purple-700 px-2.5 py-0.5 rounded-md font-semibold">CVE.org</span>'
+          : '<span class="text-xs bg-blue-50 border border-blue-200 text-blue-700 px-2.5 py-0.5 rounded-md font-semibold">NVD</span>'}
       </div>
-      <div class="flex items-center gap-4 mono text-xs text-on-surface-variant shrink-0">
+      <div class="flex items-center gap-4 text-xs font-medium text-slate-500 shrink-0">
         <span>Yayın: ${fmtDate(cve.published)}</span>
         <span>Güncelleme: ${fmtDate(cve.modified)}</span>
       </div>
     </div>
 
     <!-- İçerik -->
-    <div class="px-6 py-5 grid grid-cols-1 lg:grid-cols-[1fr_180px] gap-6">
-      <div class="space-y-4">
+    <div class="px-6 py-5 grid grid-cols-1 lg:grid-cols-[1fr_200px] gap-8">
+      <div class="space-y-6">
         <!-- Açıklama -->
         <div>
-          <div class="mono text-[10px] text-on-surface-variant tracking-widest mb-2">AÇIKLAMA</div>
-          <p class="text-on-surface text-sm leading-relaxed">${esc(cve.description)}</p>
+          <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Açıklama</h3>
+          <p class="text-slate-700 text-sm leading-relaxed">${esc(cve.description)}</p>
         </div>
 
         <!-- Etkilenen ürünler -->
         ${affected ? `
         <div>
-          <div class="mono text-[10px] text-on-surface-variant tracking-widest mb-2">ETKİLENEN ÜRÜNLER</div>
+          <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Etkilenen Ürünler</h3>
           <div class="flex flex-wrap gap-2">${affected}</div>
         </div>` : ''}
 
         <!-- Referanslar -->
         <div>
-          <div class="mono text-[10px] text-on-surface-variant tracking-widest mb-2">REFERANSLAR</div>
-          <div class="space-y-1 mono text-[11px]">${refs}</div>
+          <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Referanslar</h3>
+          <div class="space-y-2 text-sm">${refs}</div>
         </div>
       </div>
 
       <!-- CVSS paneli -->
-      <div class="bg-surface-container border border-outline-variant/20 rounded-lg p-4 flex flex-col items-center justify-center text-center gap-2">
-        <div class="mono text-[10px] text-on-surface-variant tracking-widest">CVSS SKORU</div>
-        <div class="text-5xl font-bold mono ${scoreCls}">${score}</div>
-        <div class="mono text-[10px] text-on-surface-variant">${esc(cve.cvss_version || '—')}</div>
+      <div class="bg-slate-50 border border-slate-200 rounded-lg p-5 flex flex-col items-center justify-center text-center gap-2">
+        <div class="text-xs font-bold text-slate-500 uppercase tracking-wider">CVSS Skoru</div>
+        <div class="text-5xl font-bold ${scoreCls}">${score}</div>
+        <div class="text-xs font-medium text-slate-500">${esc(cve.cvss_version || '—')}</div>
         ${cve.cvss_vector ? `
-        <div class="mt-2 w-full">
-          <div class="mono text-[9px] text-on-surface-variant mb-1">VEKTÖR</div>
-          <div class="mono text-[9px] text-on-surface break-all bg-surface-container-highest border border-outline-variant/20 rounded p-2">${esc(cve.cvss_vector)}</div>
+        <div class="mt-3 w-full">
+          <div class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Vektör</div>
+          <div class="text-xs font-mono text-slate-700 break-all bg-white border border-slate-200 rounded p-2.5 shadow-sm">${esc(cve.cvss_vector)}</div>
         </div>` : ''}
       </div>
     </div>

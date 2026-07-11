@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="dark" lang="tr">
+<html lang="tr">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
@@ -13,23 +13,24 @@
     theme: {
       extend: {
         colors: {
-          "background":               "#0c1324",
-          "surface-dim":              "#0c1324",
-          "surface-container":        "#191f31",
-          "surface-container-low":    "#151b2d",
-          "surface-container-high":   "#23293c",
-          "surface-container-highest":"#2e3447",
-          "surface-container-lowest": "#070d1f",
-          "surface-variant":          "#2e3447",
-          "on-surface":               "#dce1fb",
-          "on-surface-variant":       "#bccabb",
-          "on-background":            "#dce1fb",
-          "primary":                  "#6bfb9a",
-          "on-primary":               "#003919",
-          "secondary":                "#adc6ff",
-          "error":                    "#ffb4ab",
-          "outline-variant":          "#3d4a3e",
-          "outline":                  "#869486",
+          "background": "#f4f6f8",
+          "surface": "#ffffff",
+          "surface-dim": "#212529",
+          "surface-container": "#ffffff",
+          "surface-container-low": "#ffffff",
+          "surface-container-high": "#e9ecef",
+          "surface-container-highest": "#dee2e6",
+          "surface-container-lowest": "#ffffff",
+          "surface-variant": "#f8f9fa",
+          "on-surface": "#212529",
+          "on-surface-variant": "#6c757d",
+          "on-background": "#212529",
+          "primary": "#0d6efd",
+          "on-primary": "#ffffff",
+          "secondary": "#198754",
+          "error": "#dc3545",
+          "outline-variant": "#dee2e6",
+          "outline": "#ced4da"
         },
         fontFamily: {
           mono: ["JetBrains Mono", "monospace"],
@@ -49,150 +50,142 @@
 </head>
 <body class="bg-background text-on-background min-h-screen flex flex-col">
 
-<!-- TopNav -->
-<header class="bg-surface-dim/80 backdrop-blur-xl border-b border-outline-variant/30 fixed top-0 w-full flex justify-between items-center h-16 px-8 z-50">
+<!-- TopNavBar -->
+<header class="bg-surface-dim border-b border-outline-variant fixed top-0 w-full flex justify-between items-center h-16 px-8 z-50 shadow-sm">
   <div class="flex items-center gap-8">
-    <a href="/" class="text-2xl font-bold tracking-tighter text-primary mono uppercase">AETHER_SCAN</a>
-    <nav class="hidden md:flex gap-2 mono text-xs">
-      <a href="/" class="text-on-surface-variant hover:text-on-surface hover:bg-primary/10 px-3 py-2 rounded-lg transition-all">Port Tarayıcı</a>
-      <a href="/static/monitor.html" class="text-on-surface-variant hover:text-on-surface hover:bg-primary/10 px-3 py-2 rounded-lg transition-all">Canlı İzleme</a>
-      <a href="/static/cve.html" class="text-on-surface-variant hover:text-on-surface hover:bg-primary/10 px-3 py-2 rounded-lg transition-all">CVE Sorgulama</a>
-      <a href="/static/traffic.html" class="text-on-surface-variant hover:text-on-surface hover:bg-primary/10 px-3 py-2 rounded-lg transition-all">Trafik Analizi</a>
-    </nav>
+    <a href="/" class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary">radar</span>
+      AetherScan
+    </a>
   </div>
-  <div class="flex items-center gap-3">
-    <span class="mono text-xs text-on-surface-variant">GÜNLÜK_SİSTEMİ</span>
+  <div class="flex items-center gap-4">
+    <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm cursor-pointer ml-2">AS</div>
   </div>
 </header>
 
-<!-- Layout -->
-<div class="flex flex-1 mt-16">
+<div class="flex flex-1 mt-16 w-full h-[calc(100vh-64px)]">
 
-  <!-- Sidebar -->
-  <aside class="hidden md:flex flex-col bg-surface-container-lowest/80 border-r border-outline-variant/20 w-64 fixed top-16 h-[calc(100vh-64px)] py-4 z-40 mono text-xs">
-    <div class="px-6 mb-4 mt-2">
-      <div class="text-on-surface font-bold">NODE_01</div>
-      <div class="text-primary mt-1 flex items-center gap-1">
-        <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span> GÜNLÜK_SİSTEMİ
-      </div>
+  <!-- SideNavBar -->
+  <aside class="bg-surface border-r border-outline-variant fixed left-0 top-16 h-[calc(100vh-64px)] w-64 flex flex-col py-6 z-40 hidden md:flex">
+    <div class="px-6 mb-6">
+      <div class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Menü</div>
     </div>
-    <nav class="flex-1 space-y-1">
-      <a href="/" class="text-on-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all duration-150">
-        <span class="material-symbols-outlined text-[18px]">lan</span> Port Tarayıcı
+    <nav class="flex-1 space-y-1 px-3">
+      <a class="text-on-surface hover:bg-slate-50 rounded-md px-3 py-2.5 flex items-center gap-3 font-medium transition-colors" href="/">
+        <span class="material-symbols-outlined text-[20px] text-on-surface-variant">lan</span> Port Tarayıcı
       </a>
-      <a href="/static/monitor.html" class="text-on-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all duration-150">
-        <span class="material-symbols-outlined text-[18px]">radar</span> Canlı İzleme
+      <a class="text-on-surface hover:bg-slate-50 rounded-md px-3 py-2.5 flex items-center gap-3 font-medium transition-colors" href="/static/monitor.html">
+        <span class="material-symbols-outlined text-[20px] text-on-surface-variant">radar</span> Canlı İzleme
       </a>
-      <a href="/static/cve.html" class="text-on-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all duration-150">
-        <span class="material-symbols-outlined text-[18px]">security</span> CVE Sorgulama
+      <a class="text-on-surface hover:bg-slate-50 rounded-md px-3 py-2.5 flex items-center gap-3 font-medium transition-colors" href="/static/cve.html">
+        <span class="material-symbols-outlined text-[20px] text-on-surface-variant">security</span> CVE Sorgulama
       </a>
-      <a href="/static/traffic.html" class="text-on-surface-variant px-4 py-3 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all duration-150">
-        <span class="material-symbols-outlined text-[18px]">analytics</span> Trafik Analizi
+      <a class="text-on-surface hover:bg-slate-50 rounded-md px-3 py-2.5 flex items-center gap-3 font-medium transition-colors" href="/static/traffic.html">
+        <span class="material-symbols-outlined text-[20px] text-on-surface-variant">analytics</span> Trafik Analizi
       </a>
     </nav>
-    <div class="border-t border-outline-variant/20 pt-3 mt-2 space-y-1">
-      <a href="#" class="text-on-surface-variant px-4 py-2.5 flex items-center gap-3 hover:bg-surface-variant/30 hover:text-primary transition-all duration-150">
-        <span class="material-symbols-outlined text-[18px]">help_outline</span> Destek
+    <div class="mt-auto px-3 space-y-1 mb-4">
+      <div class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2 px-3">Sistem</div>
+      <a class="text-on-surface hover:bg-slate-50 rounded-md px-3 py-2 flex items-center gap-3 text-sm transition-colors" href="/static/support.html">
+        <span class="material-symbols-outlined text-[18px] text-on-surface-variant">help_outline</span> Destek
       </a>
-      <a href="/static/logs.html" class="bg-primary/20 text-primary border-l-4 border-primary px-4 py-2.5 flex items-center gap-3">
+      <a class="bg-blue-50 text-primary rounded-md px-3 py-2 flex items-center gap-3 text-sm font-medium" href="/static/logs.html">
         <span class="material-symbols-outlined text-[18px]">history</span> Günlükler
       </a>
+    </div>
+    <div class="px-6 py-4 border-t border-outline-variant bg-slate-50">
+      <div class="flex items-center gap-2 text-sm text-on-surface">
+        <span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+        <span class="font-medium">Günlük Sistemi</span>
+      </div>
     </div>
   </aside>
 
   <!-- Main -->
-  <main class="flex-1 md:ml-64 p-8 overflow-y-auto">
+  <main class="flex-1 md:ml-64 p-8 overflow-y-auto w-full bg-background">
 
     <div class="mb-8">
-      <h1 class="text-3xl font-bold tracking-tight text-on-surface mb-1">Günlükler</h1>
-      <p class="mono text-xs text-on-surface-variant">Tarama geçmişi ve sistem olay kayıtları.</p>
+      <h1 class="text-2xl font-bold text-on-surface mb-2">Günlükler</h1>
+      <p class="text-sm text-on-surface-variant">Tarama geçmişi ve sistem olay kayıtları.</p>
     </div>
 
     <!-- Özet Kartlar -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-      <div class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-4">
-        <div class="mono text-[10px] text-on-surface-variant mb-1 tracking-widest">TOPLAM TARAMA</div>
-        <div class="text-3xl font-bold text-on-surface mono" id="stat-scans">—</div>
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white border border-outline-variant rounded-xl p-5 shadow-sm">
+        <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Toplam Tarama</div>
+        <div class="text-3xl font-bold text-slate-800" id="stat-scans">—</div>
       </div>
-      <div class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-4">
-        <div class="mono text-[10px] text-on-surface-variant mb-1 tracking-widest">TOPLAM AÇIK PORT</div>
-        <div class="text-3xl font-bold text-primary mono" id="stat-ports">—</div>
+      <div class="bg-white border border-outline-variant rounded-xl p-5 shadow-sm">
+        <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Toplam Açık Port</div>
+        <div class="text-3xl font-bold text-primary" id="stat-ports">—</div>
       </div>
-      <div class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-4">
-        <div class="mono text-[10px] text-on-surface-variant mb-1 tracking-widest">SİSTEM LOGU</div>
-        <div class="text-3xl font-bold text-on-surface mono" id="stat-logs">—</div>
+      <div class="bg-white border border-outline-variant rounded-xl p-5 shadow-sm">
+        <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Sistem Logu</div>
+        <div class="text-3xl font-bold text-slate-800" id="stat-logs">—</div>
       </div>
-      <div class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-4">
-        <div class="mono text-[10px] text-on-surface-variant mb-1 tracking-widest">HATALAR</div>
-        <div class="text-3xl font-bold text-error mono" id="stat-errors">—</div>
+      <div class="bg-white border border-outline-variant rounded-xl p-5 shadow-sm">
+        <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Hatalar</div>
+        <div class="text-3xl font-bold text-error" id="stat-errors">—</div>
       </div>
     </div>
 
     <!-- Tarama Geçmişi -->
-    <section class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-6 mb-6 relative overflow-hidden group">
-      <div class="absolute top-0 left-0 w-1 h-full bg-primary opacity-50 group-hover:opacity-100 transition-opacity"></div>
-      <div class="mono text-[10px] text-on-surface-variant mb-5 tracking-widest flex items-center justify-between">
-        <span class="flex items-center gap-2">
-          <span class="material-symbols-outlined text-[14px]">table_chart</span>
-          [SCAN_HIST_01] TARAMA GEÇMİŞİ
-        </span>
-        <button onclick="loadHistory()" class="text-primary hover:text-on-surface transition-colors flex items-center gap-1">
-          <span class="material-symbols-outlined text-[14px]">refresh</span> YENİLE
+    <section class="bg-white border border-outline-variant rounded-xl p-6 mb-8 shadow-sm">
+      <div class="flex items-center justify-between mb-5">
+        <h2 class="text-lg font-semibold text-on-surface">Tarama Geçmişi</h2>
+        <button onclick="loadHistory()" class="text-sm font-medium text-primary hover:text-blue-800 transition-colors flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-md">
+          <span class="material-symbols-outlined text-[18px]">refresh</span> Yenile
         </button>
       </div>
-      <div class="overflow-x-auto scroll">
-        <table class="w-full mono text-xs">
-          <thead>
-            <tr class="border-b border-outline-variant/30 text-on-surface-variant">
-              <th class="text-left py-2 pr-4 tracking-widest">#</th>
-              <th class="text-left py-2 pr-4 tracking-widest">TARİH</th>
-              <th class="text-left py-2 pr-4 tracking-widest">HEDEF</th>
-              <th class="text-left py-2 pr-4 tracking-widest">IP</th>
-              <th class="text-left py-2 pr-4 tracking-widest">PORT SAYISI</th>
-              <th class="text-left py-2 pr-4 tracking-widest">AÇIK PORT</th>
-              <th class="text-left py-2 tracking-widest">SÜRE</th>
+      <div class="overflow-x-auto scroll border border-outline-variant rounded-lg">
+        <table class="w-full text-sm">
+          <thead class="bg-slate-50 border-b border-outline-variant">
+            <tr>
+              <th class="text-left py-3 px-4 font-semibold text-slate-600">#</th>
+              <th class="text-left py-3 px-4 font-semibold text-slate-600">Tarih</th>
+              <th class="text-left py-3 px-4 font-semibold text-slate-600">Hedef</th>
+              <th class="text-left py-3 px-4 font-semibold text-slate-600">IP</th>
+              <th class="text-left py-3 px-4 font-semibold text-slate-600">Port Sayısı</th>
+              <th class="text-left py-3 px-4 font-semibold text-slate-600">Açık Port</th>
+              <th class="text-left py-3 px-4 font-semibold text-slate-600">Süre</th>
             </tr>
           </thead>
-          <tbody id="history-table" class="divide-y divide-outline-variant/20">
-            <tr><td colspan="7" class="py-8 text-center text-on-surface-variant">Yükleniyor...</td></tr>
+          <tbody id="history-table" class="divide-y divide-outline-variant bg-white">
+            <tr><td colspan="7" class="py-8 text-center text-slate-500">Yükleniyor...</td></tr>
           </tbody>
         </table>
       </div>
     </section>
 
     <!-- Sistem Logları -->
-    <section class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-6 relative overflow-hidden group">
-      <div class="absolute top-0 left-0 w-1 h-full bg-secondary opacity-50 group-hover:opacity-100 transition-opacity"></div>
-      <div class="mono text-[10px] text-on-surface-variant mb-5 tracking-widest flex items-center justify-between">
-        <span class="flex items-center gap-2">
-          <span class="material-symbols-outlined text-[14px]">terminal</span>
-          [SYS_LOG_02] SİSTEM OLAY KAYITLARI
-        </span>
+    <section class="bg-white border border-outline-variant rounded-xl p-6 shadow-sm">
+      <div class="flex items-center justify-between mb-5">
+        <h2 class="text-lg font-semibold text-on-surface">Sistem Olay Kayıtları</h2>
         <div class="flex items-center gap-3">
           <!-- Filtre -->
-          <select id="log-filter" onchange="renderLogs()" class="bg-surface-container border border-outline-variant/30 text-on-surface-variant rounded px-2 py-1 text-[10px] focus:outline-none focus:border-primary/50">
-            <option value="ALL">TÜM SEVİYELER</option>
-            <option value="INFO">INFO</option>
-            <option value="WARN">WARN</option>
-            <option value="ERROR">ERROR</option>
+          <select id="log-filter" onchange="renderLogs()" class="bg-white border border-outline-variant text-slate-700 text-sm rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary shadow-sm appearance-none cursor-pointer font-medium pr-8 relative">
+            <option value="ALL">Tüm Seviyeler</option>
+            <option value="INFO">Info</option>
+            <option value="WARN">Warn</option>
+            <option value="ERROR">Error</option>
           </select>
-          <button onclick="loadLogs()" class="text-primary hover:text-on-surface transition-colors flex items-center gap-1">
-            <span class="material-symbols-outlined text-[14px]">refresh</span> YENİLE
+          <button onclick="loadLogs()" class="text-sm font-medium text-primary hover:text-blue-800 transition-colors flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-md">
+            <span class="material-symbols-outlined text-[18px]">refresh</span> Yenile
           </button>
         </div>
       </div>
-      <div class="overflow-x-auto scroll max-h-96">
-        <table class="w-full mono text-xs">
-          <thead class="sticky top-0 bg-surface-container-low">
-            <tr class="border-b border-outline-variant/30 text-on-surface-variant">
-              <th class="text-left py-2 pr-4 tracking-widest w-40">TARİH</th>
-              <th class="text-left py-2 pr-4 tracking-widest w-16">SEVİYE</th>
-              <th class="text-left py-2 pr-4 tracking-widest w-28">KAYNAK</th>
-              <th class="text-left py-2 tracking-widest">MESAJ</th>
+      <div class="overflow-x-auto scroll max-h-96 border border-outline-variant rounded-lg">
+        <table class="w-full text-sm">
+          <thead class="sticky top-0 bg-slate-50 border-b border-outline-variant z-10 shadow-sm">
+            <tr>
+              <th class="text-left py-3 px-4 font-semibold text-slate-600 w-48">Tarih</th>
+              <th class="text-left py-3 px-4 font-semibold text-slate-600 w-24">Seviye</th>
+              <th class="text-left py-3 px-4 font-semibold text-slate-600 w-36">Kaynak</th>
+              <th class="text-left py-3 px-4 font-semibold text-slate-600">Mesaj</th>
             </tr>
           </thead>
-          <tbody id="log-table" class="divide-y divide-outline-variant/20">
-            <tr><td colspan="4" class="py-8 text-center text-on-surface-variant">Yükleniyor...</td></tr>
+          <tbody id="log-table" class="divide-y divide-outline-variant bg-white">
+            <tr><td colspan="4" class="py-8 text-center text-slate-500">Yükleniyor...</td></tr>
           </tbody>
         </table>
       </div>
@@ -205,9 +198,9 @@
 let allLogs = [];
 
 const LEVEL_CLASS = {
-  INFO:  "text-primary",
-  WARN:  "text-[#eab308]",
-  ERROR: "text-error",
+  INFO:  "text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-md text-xs",
+  WARN:  "text-orange-600 bg-orange-50 px-2.5 py-0.5 rounded-md text-xs",
+  ERROR: "text-red-600 bg-red-50 px-2.5 py-0.5 rounded-md text-xs",
 };
 
 async function loadHistory() {
@@ -221,26 +214,26 @@ async function loadHistory() {
     document.getElementById("stat-ports").textContent = totalOpen;
 
     if (!data.length) {
-      tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-on-surface-variant">Henüz tarama yapılmadı.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-500">Henüz tarama yapılmadı.</td></tr>`;
       return;
     }
 
     tbody.innerHTML = data.map(r => {
-      const openClass = r.open_count > 0 ? "text-primary font-bold" : "text-on-surface-variant";
+      const openClass = r.open_count > 0 ? "text-primary font-semibold bg-blue-50 px-2 py-0.5 rounded text-xs inline-block" : "text-slate-500";
       const dur = r.duration_ms != null ? (r.duration_ms / 1000).toFixed(2) + "s" : "—";
       return `
-        <tr class="hover:bg-surface-variant/10 transition-colors">
-          <td class="py-2.5 pr-4 text-on-surface-variant">${r.id}</td>
-          <td class="py-2.5 pr-4 text-on-surface-variant">${r.scanned_at ?? "—"}</td>
-          <td class="py-2.5 pr-4 text-on-surface">${r.target}</td>
-          <td class="py-2.5 pr-4 text-on-surface-variant">${r.resolved_ip ?? "—"}</td>
-          <td class="py-2.5 pr-4 text-on-surface-variant">${r.ports_scanned ?? "—"}</td>
-          <td class="py-2.5 pr-4 ${openClass}">${r.open_count ?? 0}</td>
-          <td class="py-2.5 text-on-surface-variant">${dur}</td>
+        <tr class="hover:bg-slate-50 transition-colors">
+          <td class="py-3 px-4 text-slate-500">${r.id}</td>
+          <td class="py-3 px-4 text-slate-500 whitespace-nowrap">${r.scanned_at ?? "—"}</td>
+          <td class="py-3 px-4 text-slate-800 font-medium">${r.target}</td>
+          <td class="py-3 px-4 text-slate-600">${r.resolved_ip ?? "—"}</td>
+          <td class="py-3 px-4 text-slate-500">${r.ports_scanned ?? "—"}</td>
+          <td class="py-3 px-4"><span class="${openClass}">${r.open_count ?? 0}</span></td>
+          <td class="py-3 px-4 text-slate-500">${dur}</td>
         </tr>`;
     }).join("");
   } catch (e) {
-    tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-error">Geçmiş yüklenemedi: ${e.message}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-error bg-red-50">Geçmiş yüklenemedi: ${e.message}</td></tr>`;
   }
 }
 
@@ -256,7 +249,7 @@ async function loadLogs() {
     renderLogs();
   } catch (e) {
     document.getElementById("log-table").innerHTML =
-      `<tr><td colspan="4" class="py-8 text-center text-error">Loglar yüklenemedi: ${e.message}</td></tr>`;
+      `<tr><td colspan="4" class="py-8 text-center text-error bg-red-50">Loglar yüklenemedi: ${e.message}</td></tr>`;
   }
 }
 
@@ -266,16 +259,16 @@ function renderLogs() {
   const tbody = document.getElementById("log-table");
 
   if (!filtered.length) {
-    tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-on-surface-variant">Kayıt yok.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-slate-500">Kayıt yok.</td></tr>`;
     return;
   }
 
   tbody.innerHTML = filtered.map(l => `
-    <tr class="hover:bg-surface-variant/10 transition-colors">
-      <td class="py-2 pr-4 text-on-surface-variant whitespace-nowrap">${l.timestamp}</td>
-      <td class="py-2 pr-4 font-bold ${LEVEL_CLASS[l.level] ?? 'text-on-surface'}">${l.level}</td>
-      <td class="py-2 pr-4 text-secondary">${l.source}</td>
-      <td class="py-2 text-on-surface break-all">${l.message}</td>
+    <tr class="hover:bg-slate-50 transition-colors">
+      <td class="py-3 px-4 text-slate-500 whitespace-nowrap font-mono text-xs">${l.timestamp}</td>
+      <td class="py-3 px-4 font-bold"><span class="${LEVEL_CLASS[l.level] ?? 'text-slate-800'}">${l.level}</span></td>
+      <td class="py-3 px-4 font-medium text-slate-600">${l.source}</td>
+      <td class="py-3 px-4 text-slate-700 break-all font-mono text-xs">${l.message}</td>
     </tr>`).join("");
 }
 

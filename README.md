@@ -1,6 +1,6 @@
-# AETHER_SCAN
+# AetherScan
 
-A personal cybersecurity dashboard for network reconnaissance and vulnerability research. Built with a FastAPI backend and a dark-themed browser frontend, it combines port scanning, live traffic monitoring, CVE lookups, and connection analysis in a single interface.
+A personal cybersecurity dashboard for network reconnaissance and vulnerability research. Built with a FastAPI backend and a clean, modern enterprise-grade browser frontend, it combines port scanning, live traffic monitoring, CVE lookups, and connection analysis in a single interface.
 
 ## Screenshots
 
@@ -35,7 +35,7 @@ A personal cybersecurity dashboard for network reconnaissance and vulnerability 
 | System Metrics | psutil |
 | Database | SQLite (sqlite3) |
 | Vulnerability Data | NVD API v2.0, CVE.org |
-| Frontend | Tailwind CSS (CDN), Chart.js |
+| Frontend | Tailwind CSS, Chart.js |
 | Real-time | WebSocket |
 | Fonts | JetBrains Mono, Hanken Grotesk, Material Symbols |
 
