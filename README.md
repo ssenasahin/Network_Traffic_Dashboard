@@ -6,11 +6,11 @@ A personal cybersecurity dashboard for network reconnaissance and vulnerability 
 
 | Port Scanner | Live Monitor |
 |---|---|
-| ![Port Scanner](docs/screenshots/port_scanner.png) | ![Live Monitor](docs/screenshots/live_monitor.png) |
+| ![Port Scanner](docs/screenshots/port_scanner.png?v=2) | ![Live Monitor](docs/screenshots/live_monitor.png?v=2) |
 
 | CVE Lookup | Traffic Analysis |
 |---|---|
-| ![CVE Lookup](docs/screenshots/cve_lookup.png) | ![Traffic Analysis](docs/screenshots/traffic_analysis.png) |
+| ![CVE Lookup](docs/screenshots/cve_lookup.png?v=2) | ![Traffic Analysis](docs/screenshots/traffic_analysis.png?v=2) |
 
 ## Features
 
