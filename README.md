@@ -91,4 +91,4 @@ ag dashboard/
 
 ---
 
-Developed by [Sena](https://github.com/themlie) — [LinkedIn](https://www.linkedin.com/in/sena-sahin/)
+Developed by [Sena](https://github.com/ssenasahin) — [LinkedIn](https://www.linkedin.com/in/sena-sahin/)
